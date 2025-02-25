@@ -17,7 +17,7 @@ namespace Leasing.Presentation.Controllers
 
         public AuthController(IAuthService authService, IConfiguration config)
         {
-            _authService = authService;
+            _authService = authService; 
             _config = config;
         }
 
