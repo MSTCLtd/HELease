@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+.underlined {
+  position: relative;
+  display: inline-block !important;
+}
+
+.underlined::before {
+  content: "";
+  position: absolute;
+  bottom: -12px;
+  left: 0;
+  height: 7px;
+  width: 100% !important;
+  border: solid 8px rgb(255, 123, 0);
+  border-color: rgb(255, 123, 0) transparent transparent transparent;
+  border-radius: 50%;
+}
+
+.big {
+  font-size: 50px;
+}
+
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-scroll {
+  display: flex;
+  animation: scroll 12s linear infinite;
+}
+
+.hover\:pause:hover {
+  animation-play-state: paused;
+}
