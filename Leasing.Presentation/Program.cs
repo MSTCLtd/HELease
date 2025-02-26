@@ -6,10 +6,18 @@ using Leasing.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(context.Configuration) // Load settings from appsettings.json
+        .WriteTo.Console() // Log to console
+        .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day); // Log to daily files
+});
 builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -39,18 +47,19 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    //app.UseSwagger();
-    //app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
-
+app.UseSerilogRequestLogging(); 
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();

@@ -14,23 +14,36 @@ namespace Leasing.Presentation.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IConfiguration _config;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IAuthService authService, IConfiguration config)
+        public AuthController(IAuthService authService, IConfiguration config, ILogger<AuthController> logger)
         {
             _authService = authService; 
             _config = config;
+            _logger = logger;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var token = await _authService.LoginAsync(request.Username, request.Password);
-            if (token == "jwt-token-placeholder")
+            _logger.LogInformation("Login attempt for user: {Username}", request.Username);
+            try
             {
-                var jwtToken = GenerateJwtToken(request.Username);
-                return Ok(new { Token = jwtToken });
+                var token = await _authService.LoginAsync(request.Username, request.Password);
+                if (token == "jwt-token-placeholder")
+                {
+                    var jwtToken = GenerateJwtToken(request.Username);
+                    _logger.LogInformation("User {Username} logged in successfully", request.Username);
+                    return Ok(new { Token = jwtToken });
+                }
+                _logger.LogWarning("Login failed for user: {Username}", request.Username);
+                return Unauthorized();
             }
-            return Unauthorized();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during login for user: {Username}", request.Username);
+                return StatusCode(500);
+            }
         }
 
         [HttpPost("register")]
