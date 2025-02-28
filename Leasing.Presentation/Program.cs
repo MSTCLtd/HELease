@@ -56,7 +56,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseSerilogRequestLogging(); 
+app.UseSerilogRequestLogging();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
