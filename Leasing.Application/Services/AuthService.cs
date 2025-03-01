@@ -40,7 +40,7 @@ namespace Leasing.Application.Services
         public async Task<UserDto> RegisterAsync(string username, string password)
         {
             var user = new User { Username = username, PasswordHash = BCrypt.Net.BCrypt.HashPassword(password) };
-            await _userRepository.AddAsync(user);//added for checxk
+            await _userRepository.AddAsync(user);
             return new UserDto { Id = user.Id, Username = user.Username };
         }
     }
