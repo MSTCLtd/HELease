@@ -17,6 +17,7 @@ export default {
 				"geist-sans": 'var(--font-geist-sans)',
 				"geist-mono": 'var(--font-geist-mono)',
 				"bakbak": 'var(--font-bakbak)',
+				"biryani": 'var(--font-biryani)',
 			}
 		},
 	},

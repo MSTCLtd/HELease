@@ -2,10 +2,21 @@ import Link from 'next/link'
 import React from 'react'
 import logo from '../../assets/logo.png'
 import Image from 'next/image'
-import { Avatar, DarkThemeToggle, Dropdown } from 'flowbite-react'
-import { HiCog, HiCurrencyDollar, HiLogout, HiViewGrid } from "react-icons/hi";
+import { Avatar, Button, DarkThemeToggle, Dropdown } from 'flowbite-react'
+import { HiCog, HiCurrencyDollar, HiLogout, HiOutlineArrowRight, HiUser, HiViewGrid } from "react-icons/hi";
+import Logo from './Logo'
+import { useSelector } from 'react-redux'
+import BuyerDropdown from './BuyerDropdown'
+import LocaleSwitcher from './locale-switcher'
+import { useTranslation } from '../../hooks/useTranslation'
+import { useRouter } from 'next/router'
+// import { LanguageSwitcher } from './LanguageSwitcher';
 
 export default function Navbar() {
+    const { user } = useSelector((state: any) => state.HELReducer)
+    const { t } = useTranslation()
+    const router = useRouter()
+
     return (
         <nav className="bg-white dark:bg-gray-800 antialiased">
             <div className="max-w-screen-2xl px-4 mx-auto 2xl:px-0">
@@ -26,26 +37,11 @@ export default function Navbar() {
                         </div>
                     </form>
 
-                    <div className="shrink-0">
-                        <div className="grid grid-flow-col ">
-                            <div className="row-span-3 mr-2">
-                                <Image src={logo} alt="logo" width={65} />
-                            </div>
-                            <div className="col-span-2">
-                                <Link href="/" title="" className="font-extrabold text-3xl font-bakbak dark:text-white">
-                                    उपकरण
-                                </Link>
-                                <p className='text-sm bg-gradient-to-r from-red-500 dark:from-red-400 to-teal-400 dark:to-teal-200 bg-clip-text text-transparent'>Empowering Growth</p>
-                            </div>
-                        </div>
-                        <div className="grid">
-
-                        </div>
-
-                    </div>
+                    <Logo />
 
                     <div className="flex items-center justify-end lg:space-x-2">
                         <DarkThemeToggle />
+                        <LocaleSwitcher />
                         <div className="relative md:hidden">
                             <button type="button" data-collapse-toggle="ecommerce-navbar-search-2" className="inline-flex hover:bg-gray-100 items-center rounded-lg justify-center gap-2 p-2 text-gray-900 dark:text-white dark:hover:bg-gray-700">
                                 <span className="sr-only">
@@ -57,7 +53,7 @@ export default function Navbar() {
                             </button>
                         </div>
 
-                        <button id="cartDropdownButton1" data-dropdown-toggle="cartDropdown1" type="button" className="inline-flex items-center justify-center p-2 hover:bg-gray-100 rounded-lg text-sm font-medium leading-none text-gray-900 dark:text-white dark:hover:bg-gray-700">
+                        {/* <button id="cartDropdownButton1" data-dropdown-toggle="cartDropdown1" type="button" className="inline-flex items-center justify-center p-2 hover:bg-gray-100 rounded-lg text-sm font-medium leading-none text-gray-900 dark:text-white dark:hover:bg-gray-700">
                             <span className="sr-only">
                                 Cart
                             </span>
@@ -71,7 +67,7 @@ export default function Navbar() {
                             <svg className="hidden sm:flex w-4 h-4 text-gray-900 dark:text-white ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 9-7 7-7-7" />
                             </svg>
-                        </button>
+                        </button> */}
                         {/* <div id="cartDropdown1" className="z-10 hidden mx-auto w-[360px] space-y-4 overflow-hidden rounded-lg bg-white p-4 antialiased shadow-lg dark:bg-gray-700">
                             <dl className="flex items-center justify-between gap-4 border-b border-gray-200 pb-4 dark:border-gray-600">
                                 <dt className="font-semibold leading-none text-gray-900 dark:text-white">Your shopping cart</dt>
@@ -200,17 +196,10 @@ export default function Navbar() {
                             <a href="#" title="" className="mb-2 me-2 inline-flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" role="button"> See your cart </a>
                         </div> */}
 
-                        <Dropdown label="" dismissOnClick={false} renderTrigger={() => <Avatar placeholderInitials="RR" rounded bordered />}>
-                            <Dropdown.Header>
-                                <span className="block text-sm">Bonnie Green</span>
-                                <span className="block truncate text-sm font-medium">bonnie@flowbite.com</span>
-                            </Dropdown.Header>
-                            <Dropdown.Item icon={HiViewGrid}>Dashboard</Dropdown.Item>
-                            <Dropdown.Item icon={HiCog}>Settings</Dropdown.Item>
-                            <Dropdown.Item icon={HiCurrencyDollar}>Earnings</Dropdown.Item>
-                            <Dropdown.Divider />
-                            <Dropdown.Item icon={HiLogout} className='text-red-500 dark:text-red-500 hover:dark:bg-red-300 '>Sign out</Dropdown.Item>
-                        </Dropdown>
+                        {user ? <BuyerDropdown /> : <>
+                            <Button color='blue' size='sm' href='/login' as={Link} className='hidden sm:block'>Register / Sign In <HiOutlineArrowRight className="ml-2 h-5 w-5" /></Button>
+                            <Button color='blue' size='sm' href='/login' as={Link} className='block sm:hidden'><HiUser className="h-5 w-5" /></Button>
+                        </>}
                     </div>
                 </div>
 
@@ -227,35 +216,35 @@ export default function Navbar() {
                 </form>
 
                 <div className="flex lg:justify-center">
-                    <ul className="flex items-center justify-start gap-6 md:gap-8 py-3 sm:justify-center">
+                    <ul className={'flex items-center justify-start gap-6 md:gap-8 py-3 sm:justify-center ' + (router.locale == 'hi' ? 'font-semibold' : 'font-medium')}>
                         <li>
-                            <Link href="/" title="" className="flex text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
-                                Home
+                            <Link href="/" title="" className="flex text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
+                                {t('home.home')}
                             </Link>
                         </li>
                         <li className="shrink-0">
-                            <Link href="/about" title="" className="flex text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
-                                About Us
+                            <Link href="/about" title="" className="flex text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
+                                {t('home.aboutus')}
                             </Link>
                         </li>
                         <li className="shrink-0">
-                            <Link href="/partner" prefetch title="" className="flex text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
-                                Partner With Us
+                            <Link href="/partner" prefetch title="" className="flex text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
+                                {t('home.partner')}
                             </Link>
                         </li>
                         <li className="shrink-0 hidden sm:flex">
-                            <Link href="/updates" title="" className="text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
-                                Updates
+                            <Link href="/updates" title="" className="text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
+                                {t('home.updates')}
                             </Link>
                         </li>
                         <li className="shrink-0 hidden sm:flex">
-                            <a href="#" title="" className="text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
-                                Contact Us
+                            <a href="#" title="" className="text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
+                                {t('home.contact')}
                             </a>
                         </li>
                         <li className="shrink-0 hidden sm:flex">
-                            <Link href="/msmecorner" title="" className="text-sm font-medium text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
-                                MSME Corner
+                            <Link href="/msmecorner" title="" className="text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
+                                {t('home.msme')}
                             </Link>
                         </li>
                     </ul>

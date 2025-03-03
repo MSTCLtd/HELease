@@ -3,44 +3,34 @@ import { Badge } from 'flowbite-react'
 import Image from 'next/image'
 import React from 'react'
 import aboutUsImage from '../../assets/about_us.png'
+import { useTranslation } from '../../hooks/useTranslation'
 
 export default function about() {
-    return (<CommonMaster title='About Us'>
+    const { t } = useTranslation()
+
+    return (<CommonMaster title={t('about.aboutus')}>
         <div className="bg-gray-100 dark:bg-gray-900">
             {/* Banner Section */}
             <div className="relative w-full h-64 md:h-96">
                 <Image src={aboutUsImage} alt='About Us' fill={true} />
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <h1 className="text-white text-3xl md:text-5xl font-bold text-center">
-                        About Us
+                    <h1 className="text-white text-3xl md:text-5xl font-bold text-center font-bakbak">
+                        {t('about.aboutus')}
                     </h1>
                 </div>
             </div>
         </div>
 
         <div className='max-w-screen-lg mx-auto text-justify mt-5 dark:text-gray-400'>
-            <p className='text-2xl font-bakbak dark:text-white'>Welcome to Upkaran, your one-stop destination for top-quality industrial tools, machinery, and equipment. We are
-                dedicated to bridging the gap between innovative technology and efficient industrial solutions, serving businesses across
-                sectors with unparalleled expertise and excellence.</p>
+            <p className='text-2xl font-bakbak dark:text-white'>{t('about.para1')}</p>
             <br />
-            <p>Upkaran is a first of its kind initiative by MSTC Limited (Category 1 PSU under Ministry of Steel) to connect Brands /
-                Manufacturers/ Dealers and MSMEs fostering innovation and sustainability in the manufacturing and production
-                ecosystem. Our goal is to empower industries with the latest technology and reliable tools to boost productivity and
-                efficiency.</p>
+            <p>{t('about.para2')}</p>
             <br />
-            <p>Our Mission: Our mission is to provide businesses with access to premium tools and machinery at competitive prices. By
-                ensuring exceptional quality, seamless service, and prompt delivery, we aim to become the trusted partner for industries
-                across India and beyond.</p>
+            <p>{t('about.para3')}</p>
             <br />
-            <p>
-                Our Commitment to Excellence: At Upkaran, we understand the critical role tools and machinery play in driving industrial
-                success. That&apos;s why we strive to deliver excellence in every product and service, building long-term relationships with our
-                customers based on trust and reliability.
-            </p>
+            <p>{t('about.para4')}</p>
             <br />
-            <p>
-                We value our customers and are always here to help. For inquiries, feedback, or support, feel free to contact OUR TEAM.
-            </p>
+            <p>{t('about.para5')}</p>
         </div>
         <section className="bg-white dark:bg-gray-900">
             <div className="max-w-screen-xl px-4 py-8 mx-auto lg:px-6 sm:py-16 lg:py-24">
