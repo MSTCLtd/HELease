@@ -1,5 +1,7 @@
 ﻿using Leasing.Application.Interfaces;
+using Leasing.Domain.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -56,6 +58,13 @@ namespace Leasing.Presentation.Controllers
         private string GenerateJwtToken(string username)
         {
             var claims = new[] { new Claim(ClaimTypes.Name, username) };
+
+//            var claims = new[]
+//{
+//        new Claim(ClaimTypes.Name, username),
+//        new Claim(ClaimTypes.Role, user.Role)
+//        };
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
@@ -66,8 +75,16 @@ namespace Leasing.Presentation.Controllers
                 signingCredentials: creds);
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        
+
     }
 
     public class LoginRequest { public string Username { get; set; } public string Password { get; set; } }
     public class RegisterRequest { public string Username { get; set; } public string Password { get; set; } }
+
+    public class ForgotPasswordRequest { public string Username { get; set; } }
+    public class ResetPasswordRequest { public string Username { get; set; } public string Token { get; set; } public string NewPassword { get; set; } }
+
+
 }

@@ -1,4 +1,4 @@
-﻿using Leasing.Domain;
+﻿using Leasing.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

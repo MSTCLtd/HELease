@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Leasing.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,6 @@ namespace Leasing.Domain.Interfaces
     {
         Task<User> GetByUsernameAsync(string username);
         Task<User> AddAsync(User user);
+        Task UpdateAsync(User user);
     }
 }
