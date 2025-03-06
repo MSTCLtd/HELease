@@ -1,40 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Leasing.Application.Interfaces;
 using MailKit.Net.Smtp;
-using MimeKit;
-using Leasing.Application.Interfaces;
 using Microsoft.Extensions.Configuration;
-namespace Leasing.Application.Services;
-
+using Microsoft.Extensions.Logging;
+using MimeKit;
 
 public class EmailService : IEmailService
 {
     private readonly IConfiguration _configuration;
+    private readonly ILogger<EmailService> _logger;
 
-    public EmailService(IConfiguration configuration)
+    public EmailService(IConfiguration configuration, ILogger<EmailService> logger)
     {
         _configuration = configuration;
+        _logger = logger;
     }
 
     public async Task Send(string to, string subject, string body, bool isHtml, SenderInfo senderInfo)
     {
-        var message = new MimeMessage();
-        message.From.Add(new MailboxAddress(senderInfo.Name, senderInfo.Email));
-        message.To.Add(new MailboxAddress("", to));
-        message.Subject = subject;
+        try
+        {
+            var email = new MimeMessage();
+            email.From.Add(new MailboxAddress(senderInfo.Name, _configuration["Email:Email"]));
+            email.To.Add(new MailboxAddress("", to));
+            email.Subject = subject;
+            email.Body = new TextPart(isHtml ? "html" : "plain") { Text = $"Dear {senderInfo.Name},<br /><br />{body}.<br/><br/>Regards,<br />MSTC LTD." };
 
-        var bodyBuilder = new BodyBuilder();
-        if (isHtml) bodyBuilder.HtmlBody = body;
-        else bodyBuilder.TextBody = body;
-        message.Body = bodyBuilder.ToMessageBody();
+            using var smtp = new SmtpClient();
+            await smtp.ConnectAsync(_configuration["Email:SmtpHost"], int.Parse(_configuration["Email:SmtpPort"]), MailKit.Security.SecureSocketOptions.None);
+            await smtp.AuthenticateAsync(_configuration["Email:Email"], _configuration["Email:Password"]);
+            await smtp.SendAsync(email);
+            await smtp.DisconnectAsync(true);
 
-        using var client = new SmtpClient();
-        await client.ConnectAsync(_configuration["Email:SmtpHost"], int.Parse(_configuration["Email:SmtpPort"]), false);
-        await client.AuthenticateAsync(_configuration["Email:SmtpUser"], _configuration["Email:SmtpPass"]);
-        await client.SendAsync(message);
-        await client.DisconnectAsync(true);
+            _logger.LogInformation("Email sent to {To} with subject {Subject}", to, subject);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send email to {To}: {Message}", to, ex.Message);
+            throw;
+        }
     }
 }

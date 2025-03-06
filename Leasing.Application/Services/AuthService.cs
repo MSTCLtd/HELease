@@ -53,7 +53,7 @@ public class AuthService : IAuthService
         if (otpType == "email")
         {
             var senderInfo = new SenderInfo { Name = "Upkaran Portal", Email = _configuration["Email:From"] };
-            await _emailService.Send(identifier, "Registration OTP", $"Your OTP is: {otp}", false, senderInfo);
+            await _emailService.Send(identifier, "Registration OTP", $"Your OTP is: {otp}", true, senderInfo);
         }
         else
         {
