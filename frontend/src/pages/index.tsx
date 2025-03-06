@@ -1,4 +1,3 @@
-import Carousel from '@/components/Carousel'
 import CategoryCard from '@/components/CategoryCard'
 import FeaturesGrid from '@/components/FeaturesGrid'
 import CommonMaster from '@/layouts/CommonMaster'
@@ -18,6 +17,7 @@ import tataLogo from '../../assets/Tata_logo.png'
 import eicherLogo from '../../assets/Eicher-Motors-Logo.png'
 import Image from 'next/image'
 import Link from 'next/link'
+import CompCarousel from '@/components/Carousel'
 
 export default function index() {
 	const customerLogos = [
@@ -28,12 +28,14 @@ export default function index() {
 	]
 	return (<CommonMaster title='Welcome'>
 
-		<div className="grid grid-cols-3 gap-4 bg-gray-900 p-4 py-10">
+		<div className="grid grid-cols-3 gap-4 bg-gray-900">
 			<div className="col-span-2">
-				<Carousel />
+				<CompCarousel />
 			</div>
 			<div>
+				<br />
 				<FeaturesGrid />
+				<br />
 			</div>
 		</div>
 		<div className='max-w-screen-2xl mx-auto'>
@@ -69,6 +71,6 @@ export default function index() {
 				<CategoryCard title='Specialized Equipments' image={itemSpecialized} link='#' />
 			</div>
 		</div>
-	</CommonMaster >
+	</CommonMaster>
 	)
 }

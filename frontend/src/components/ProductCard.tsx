@@ -1,13 +1,12 @@
+import Link from 'next/link'
 import React from 'react'
 
-export default function ProductCard() {
-    return (<a href='#' className='hover:shadow-lg'>
+export default function ProductCard({ id }: { id: number }) {
+    return (<Link href={'/product/' + id} className='hover:shadow-lg'>
         <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
             <div className="h-56 w-full">
-                <a href="#">
-                    <img className="mx-auto h-full dark:hidden" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/ipad-light.svg" alt="" />
-                    <img className="mx-auto hidden h-full dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/ipad-dark.svg" alt="" />
-                </a>
+                <img className="mx-auto h-full dark:hidden" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/ipad-light.svg" alt="" />
+                <img className="mx-auto hidden h-full dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/ipad-dark.svg" alt="" />
             </div>
 
             <div className="pt-6">
@@ -97,6 +96,6 @@ export default function ProductCard() {
                 </div>
             </div>
         </div>
-    </a>
+    </Link>
     )
 }

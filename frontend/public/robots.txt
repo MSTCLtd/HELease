@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.helease.com
+
+# Sitemaps
+Sitemap: https://www.helease.com/sitemap.xml
