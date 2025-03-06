@@ -17,7 +17,7 @@ namespace Leasing.Presentation.Controllers
             _userRepository = userRepository;
         }
 
-        [HttpGet("me")]
+        [HttpGet("GetVurrentUser")]
         public async Task<IActionResult> GetCurrentUser()
         {
             var username = User.FindFirst(ClaimTypes.Name)?.Value;

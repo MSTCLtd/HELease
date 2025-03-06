@@ -36,5 +36,13 @@ namespace Leasing.Infrastructure.Repositories
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
         }
+        public async Task<User> GetByMobileNumberAsync(string mobileNumber)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.MobileNumber == mobileNumber);
+        }
+        public async Task<User> GetByEmailAsync(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
     }
 }

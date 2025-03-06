@@ -1,90 +1,93 @@
-﻿using Leasing.Application.Interfaces;
-using Leasing.Domain.Entities;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Leasing.Application.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using static Leasing.Application.Interfaces.IAuthService;
 
-namespace Leasing.Presentation.Controllers
+namespace Leasing.Presentation.Controllers;
+[Route("api/[controller]")]
+[ApiController]
+public class AuthController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    private readonly IAuthService _authService;
+    private readonly IConfiguration _config;
+    private readonly ILogger<AuthController> _logger;
+
+    public AuthController(IAuthService authService, IConfiguration config, ILogger<AuthController> logger)
     {
-        private readonly IAuthService _authService;
-        private readonly IConfiguration _config;
-        private readonly ILogger<AuthController> _logger;
-
-        public AuthController(IAuthService authService, IConfiguration config, ILogger<AuthController> logger)
-        {
-            _authService = authService; 
-            _config = config;
-            _logger = logger;
-        }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
-        {
-            _logger.LogInformation("Login attempt for user: {Username}", request.Username);
-            try
-            {
-                var token = await _authService.LoginAsync(request.Username, request.Password);
-                if (token == "jwt-token-placeholder")
-                {
-                    var jwtToken = GenerateJwtToken(request.Username);
-                    _logger.LogInformation("User {Username} logged in successfully", request.Username);
-                    return Ok(new { Token = jwtToken });
-                }
-                _logger.LogWarning("Login failed for user: {Username}", request.Username);
-                return Unauthorized();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error during login for user: {Username}", request.Username);
-                return StatusCode(500);
-            }
-        }
-
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
-        {
-            var user = await _authService.RegisterAsync(request.Username, request.Password);
-            return Ok(user);
-        }
-
-        private string GenerateJwtToken(string username)
-        {
-            var claims = new[] { new Claim(ClaimTypes.Name, username) };
-
-//            var claims = new[]
-//{
-//        new Claim(ClaimTypes.Name, username),
-//        new Claim(ClaimTypes.Role, user.Role)
-//        };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
-                claims: claims,
-                expires: DateTime.Now.AddHours(1),
-                signingCredentials: creds);
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        
-
+        _authService = authService;
+        _config = config;
+        _logger = logger; 
     }
 
-    public class LoginRequest { public string Username { get; set; } public string Password { get; set; } }
-    public class RegisterRequest { public string Username { get; set; } public string Password { get; set; } }
+    [HttpPost("register/send-otp")]
+    public async Task<IActionResult> SendOtpForRegistration([FromBody] OtpRequest request)
+    {
+        await _authService.SendOtpForRegistrationAsync(request.Identifier, request.OtpType);
+        return Ok("OTP sent for registration.");
+    }
 
-    public class ForgotPasswordRequest { public string Username { get; set; } }
-    public class ResetPasswordRequest { public string Username { get; set; } public string Token { get; set; } public string NewPassword { get; set; } }
+    [HttpPost("register/verify-otp")]
+    public async Task<IActionResult> VerifyOtpAndRegister([FromBody] VerifyOtpRequest request)
+    {
+        var user = await _authService.VerifyOtpAndRegisterAsync(
+            request.Identifier, request.Otp, request.OtpType,
+            new UserDetailsRequest { Name = request.Name, Email = request.Email, BusinessName = request.BusinessName });
+        return Ok(user);
+    }
 
+    [HttpPost("login/send-otp")]
+    public async Task<IActionResult> SendOtpForLogin([FromBody] OtpRequest request)
+    {
+        await _authService.SendOtpForLoginAsync(request.Identifier, request.OtpType);
+        return Ok("OTP sent for login.");
+    }
 
+    [HttpPost("login/verify-otp")]
+    public async Task<IActionResult> VerifyOtpAndLogin([FromBody] VerifyOtpRequest request)
+    {
+        var token = await _authService.VerifyOtpAndLoginAsync(request.Identifier, request.Otp, request.OtpType);
+        if (token == "jwt-token-placeholder")
+            return Ok(new { Token = GenerateJwtToken(request.Identifier) });
+        return Unauthorized();
+    }
+
+    private string GenerateJwtToken(string identifier)
+    {
+        var claims = new[] { new Claim(ClaimTypes.Name, identifier) };
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var token = new JwtSecurityToken(
+            issuer: _config["Jwt:Issuer"],
+            audience: _config["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.Now.AddHours(1),
+            signingCredentials: creds);
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    [HttpGet("test-log")]
+    public IActionResult TestLog()
+    {
+        _logger.LogInformation("Test log entry from AuthController");
+        return Ok("Logged");
+    }
+
+    
+
+}
+
+public class OtpRequest { public string Identifier { get; set; } public string OtpType { get; set; } }
+
+public class VerifyOtpRequest
+{
+    public string Identifier { get; set; } // e.g. emialid, mobile number
+    public string Otp { get; set; }
+    public string OtpType { get; set; }  // sent on mail, or mobile 
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public string BusinessName { get; set; }
 }
