@@ -1,19 +1,30 @@
 import ProductCard from '@/components/ProductCard';
+import ProductImageGallery from '@/components/ProductImageGallery';
 import CommonMaster from '@/layouts/CommonMaster'
 import { Button } from 'flowbite-react'
 import Image from 'next/image';
 import { useRouter } from 'next/router'
 import React from 'react'
 import { HiEye, HiOutlineTrendingUp, HiCheck } from "react-icons/hi";
+import prod1 from '../../../assets/prod1.jpg'
+import prod2 from '../../../assets/prod2.jpg'
+import prod3 from '../../../assets/prod3.jpg'
+import prod4 from '../../../assets/prod4.jpg'
 
 
 export default function Product() {
     const { query } = useRouter()
+    const productImages = [
+        prod1.src,
+        prod2.src,
+        prod3.src,
+        prod4.src
+    ];
     return (
         <CommonMaster>
             <div className='max-w-screen-2xl mx-auto'>
-                <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
-                    <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
+                <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-6">
+                    <div className=" max-w-screen-2xl px-4 2xl:px-0">
                         <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Trailed Offset Disc Harrow (with Tyre)</h1>
 
                         <div className="mt-4 sm:flex sm:items-center sm:gap-4">
@@ -47,9 +58,118 @@ export default function Product() {
                                 <p className="text-sm font-medium text-primary-700 dark:text-primary-500">Deliver to Bonnie Green- Sacramento 23647</p>
                             </div>
                         </div>
+                        <br />
+                        <div className='grid grid-cols-1 md:grid-cols-6 gap-4'>
+                            <div className='md:col-span-3'>
+                                <ProductImageGallery images={productImages} />
+                            </div>
 
+                            <div className="mt-6 md:min-w-96 md:max-w-xl space-y-6 sm:mt-8 lg:mt-0">
+                                <div className="flex items-start justify-between gap-4">
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-xl font-bold text-gray-900 dark:text-white">
+                                                <s> &#8377;1,499.00 </s>
+                                            </p>
+                                            <span className="me-2 rounded bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"> -15% </span>
+                                        </div>
+                                        <p className="text-3xl font-extrabold text-gray-900 dark:text-white">&#8377; 1,274.00</p>
+                                    </div>
+
+                                    <ul className="shrink-0 space-y-1 text-sm font-medium">
+                                        <li className="flex items-center gap-1 text-green-600 dark:text-green-400">
+                                            <HiEye size={18} />
+                                            25,534
+                                        </li>
+
+                                        <li className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                                            <HiOutlineTrendingUp size={18} />
+                                            3,247 leads
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-1">
+                                    <div>
+                                        <p className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">Benefits</p>
+                                        <ul className="mb-2 space-y-1 text-sm font-normal text-gray-500 dark:text-gray-400">
+                                            <li className="flex items-center gap-2">
+                                                <HiCheck />
+                                                Heavy duty cast iron spools to counter weight
+                                            </li>
+                                            <li className="flex items-center gap-2">
+                                                <svg className="h-4 w-4 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5" />
+                                                </svg>
+                                                Warranty included
+                                            </li>
+                                            <li className="flex items-center gap-2">
+                                                <svg className="h-4 w-4 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5" />
+                                                </svg>
+                                                Damage and theft insurance
+                                            </li>
+                                        </ul>
+                                        <a href="#" title="" className="text-sm font-medium text-primary-700 underline hover:no-underline dark:text-primary-500"> More details </a>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center space-x-4">
+                                    <Button color='blue' className="flex w-full items-center justify-center rounded-lg px-5 text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" role="button">
+                                        <svg className="-ms-2 me-2 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6" />
+                                        </svg>
+                                        Add to cart
+                                    </Button>
+
+                                    <button type="button" data-tooltip-target="tooltip-add-to-favorites" className="flex items-center justify-center rounded-lg border border-gray-200 bg-white p-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700" role="button">
+                                        <svg className="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z" />
+                                        </svg>
+                                    </button>
+                                    <div id="tooltip-add-to-favorites" role="tooltip" className="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700">
+                                        Add to favorites
+                                        <div className="tooltip-arrow" data-popper-arrow></div>
+                                    </div>
+                                </div>
+
+                                <hr className="border-gray-200 dark:border-gray-700" />
+
+                                <div>
+                                    <p className="mb-2 text-sm font-normal text-gray-500 dark:text-gray-400">
+                                        Sold and shipped by
+                                        <span className="font-semibold text-gray-900 dark:text-white">Flowbite</span>
+                                    </p>
+
+                                    <div className="mb-2 flex items-center gap-2">
+                                        <div className="flex items-center gap-1">
+                                            <svg className="h-4 w-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
+                                            </svg>
+                                            <svg className="h-4 w-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
+                                            </svg>
+                                            <svg className="h-4 w-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
+                                            </svg>
+                                            <svg className="h-4 w-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
+                                            </svg>
+                                            <svg className="h-4 w-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
+                                            </svg>
+                                        </div>
+                                        <p className="text-sm font-medium leading-none text-gray-500 dark:text-gray-400">(5.0)</p>
+                                        <a href="#" className="text-sm font-medium leading-none text-gray-900 underline hover:no-underline dark:text-white"> 345 Reviews </a>
+                                    </div>
+
+                                    <a href="#" title="" className="text-sm font-medium text-primary-700 underline hover:no-underline dark:text-primary-500"> View seller information </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div></div>
                         <div className="mt-8 lg:flex lg:items-start lg:gap-8">
-                            <div className="lg:w-full lg:max-w-5xl">
+                            {/* <div className="lg:w-full lg:max-w-5xl">
                                 <div className="px-4">
                                     <div className="max-w-md lg:max-w-none mx-auto flex flex-col lg:flex-row justify-center mb-4">
                                         <ul className="grid grid-cols-4 lg:block gap-4 order-2 lg:order-1 lg:space-y-4 mt-8 lg:mt-0" id="product-2-tab" data-tabs-toggle="#product-2-tab-content" data-tabs-active-classes="border-gray-200 dark:border-gray-700" data-tabs-inactive-classes="border-transparent hover:border-gray-200 dark:hover:dark:border-gray-700 dark:border-transparent" role="tablist">
@@ -129,114 +249,12 @@ export default function Product() {
                                                 <img className="w-full mx-auto hidden dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-side-dark.svg" alt="" />
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div className="mt-6 md:min-w-96 md:max-w-xl space-y-6 sm:mt-8 lg:mt-0">
-                                <div className="flex items-start justify-between gap-4">
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <p className="text-xl font-bold text-gray-900 dark:text-white">
-                                                <s> &#8377;1,499.00 </s>
-                                            </p>
-                                            <span className="me-2 rounded bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"> -15% </span>
                                         </div>
-                                        <p className="text-3xl font-extrabold text-gray-900 dark:text-white">&#8377; 1,274.00</p>
-                                    </div>
-
-                                    <ul className="shrink-0 space-y-1 text-sm font-medium">
-                                        <li className="flex items-center gap-1 text-green-600 dark:text-green-400">
-                                            <HiEye size={18} />
-                                            25,534
-                                        </li>
-
-                                        <li className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
-                                            <HiOutlineTrendingUp size={18} />
-                                            3,247 leads
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div className="grid grid-cols-1 gap-2 md:grid-cols-3 lg:grid-cols-1">
-                                    <div>
-                                        <p className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">Benefits</p>
-                                        <ul className="mb-2 space-y-1 text-sm font-normal text-gray-500 dark:text-gray-400">
-                                            <li className="flex items-center gap-2">
-                                                <HiCheck />
-                                                Heavy duty cast iron spools to counter weight
-                                            </li>
-                                            <li className="flex items-center gap-2">
-                                                <svg className="h-4 w-4 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5" />
-                                                </svg>
-                                                Warranty included
-                                            </li>
-                                            <li className="flex items-center gap-2">
-                                                <svg className="h-4 w-4 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5" />
-                                                </svg>
-                                                Damage and theft insurance
-                                            </li>
-                                        </ul>
-                                        <a href="#" title="" className="text-sm font-medium text-primary-700 underline hover:no-underline dark:text-primary-500"> More details </a>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center space-x-4">
-                                    <Button color='blue' className="flex w-full items-center justify-center rounded-lg px-5  text-sm font-medium focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" role="button">
-                                        <svg className="-ms-2 me-2 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6" />
-                                        </svg>
-
-                                        Add to cart
-                                    </Button>
-
-                                    <button type="button" data-tooltip-target="tooltip-add-to-favorites" className="flex items-center justify-center rounded-lg border border-gray-200 bg-white p-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700" role="button">
-                                        <svg className="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z" />
-                                        </svg>
-                                    </button>
-                                    <div id="tooltip-add-to-favorites" role="tooltip" className="tooltip invisible absolute z-10 inline-block rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white opacity-0 shadow-sm transition-opacity duration-300 dark:bg-gray-700">
-                                        Add to favorites
-                                        <div className="tooltip-arrow" data-popper-arrow></div>
-                                    </div>
-                                </div>
-
-                                <hr className="border-gray-200 dark:border-gray-700" />
-
-                                <div>
-                                    <p className="mb-2 text-sm font-normal text-gray-500 dark:text-gray-400">
-                                        Sold and shipped by
-                                        <span className="font-semibold text-gray-900 dark:text-white">Flowbite</span>
-                                    </p>
-
-                                    <div className="mb-2 flex items-center gap-2">
-                                        <div className="flex items-center gap-1">
-                                            <svg className="h-4 w-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
-                                            </svg>
-                                            <svg className="h-4 w-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
-                                            </svg>
-                                            <svg className="h-4 w-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
-                                            </svg>
-                                            <svg className="h-4 w-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
-                                            </svg>
-                                            <svg className="h-4 w-4 text-yellow-300" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
-                                            </svg>
                                         </div>
-                                        <p className="text-sm font-medium leading-none text-gray-500 dark:text-gray-400">(5.0)</p>
-                                        <a href="#" className="text-sm font-medium leading-none text-gray-900 underline hover:no-underline dark:text-white"> 345 Reviews </a>
-                                    </div>
+                                        </div> */}
+                            {/* <div className="flex justify-center items-center min-h-screen bg-gray-100"> */}
+                            {/* </div> */}
 
-                                    <a href="#" title="" className="text-sm font-medium text-primary-700 underline hover:no-underline dark:text-primary-500"> View seller information </a>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </section>
