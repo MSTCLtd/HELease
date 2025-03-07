@@ -7,7 +7,7 @@ import Logo from '@/components/Logo'
 import CommonMaster from '@/layouts/CommonMaster'
 
 export default function login() {
-    return (<CommonMaster>
+    return (<CommonMaster title='Sign In'>
         <section className=" dark:bg-gray-900 py-20">
             <div className="flex flex-col items-center px-6 mx-auto lg:py-0">
                 {/* <Logo /> */}
