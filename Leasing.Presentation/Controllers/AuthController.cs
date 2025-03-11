@@ -34,7 +34,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> VerifyOtpAndRegister([FromBody] VerifyOtpRequest request)
     {
         var user = await _authService.VerifyOtpAndRegisterAsync(
-            request.Identifier, request.Otp, request.OtpType,
+            request.Mobile_Email, request.Otp, request.OtpType,
             new UserDetailsRequest { Name = request.Name, Email = request.Email, BusinessName = request.BusinessName });
         return Ok(user);
     }
@@ -49,9 +49,9 @@ public class AuthController : ControllerBase
     [HttpPost("login/verify-otp")]
     public async Task<IActionResult> VerifyOtpAndLogin([FromBody] VerifyOtpRequest request)
     {
-        var token = await _authService.VerifyOtpAndLoginAsync(request.Identifier, request.Otp, request.OtpType);
+        var token = await _authService.VerifyOtpAndLoginAsync(request.Mobile_Email, request.Otp, request.OtpType);
         if (token == "jwt-token-placeholder")
-            return Ok(new { Token = GenerateJwtToken(request.Identifier) });
+            return Ok(new { Token = GenerateJwtToken(request.Mobile_Email) });
         return Unauthorized();
     }
 
@@ -84,7 +84,7 @@ public class OtpRequest { public string Identifier { get; set; } public string O
 
 public class VerifyOtpRequest
 {
-    public string Identifier { get; set; } // e.g. emialid, mobile number
+    public string Mobile_Email { get; set; } // e.g. emialid, mobile number
     public string Otp { get; set; }
     public string OtpType { get; set; }  // sent on mail, or mobile 
     public string Name { get; set; }
