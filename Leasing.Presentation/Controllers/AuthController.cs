@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
     [HttpPost("register/send-otp")]
     public async Task<IActionResult> SendOtpForRegistration([FromBody] OtpRequest request)
     {
-        await _authService.SendOtpForRegistrationAsync(request.Identifier, request.OtpType);
+        await _authService.SendOtpForRegistrationAsync(request.Mobile_Email, request.OtpType);
         return Ok("OTP sent for registration.");
     }
 
@@ -42,7 +42,7 @@ public class AuthController : ControllerBase
     [HttpPost("login/send-otp")]
     public async Task<IActionResult> SendOtpForLogin([FromBody] OtpRequest request)
     {
-        await _authService.SendOtpForLoginAsync(request.Identifier, request.OtpType);
+        await _authService.SendOtpForLoginAsync(request.Mobile_Email, request.OtpType);
         return Ok("OTP sent for login.");
     }
 
@@ -80,7 +80,7 @@ public class AuthController : ControllerBase
 
 }
 
-public class OtpRequest { public string Identifier { get; set; } public string OtpType { get; set; } }
+public class OtpRequest { public string Mobile_Email { get; set; } public string OtpType { get; set; } }
 
 public class VerifyOtpRequest
 {
