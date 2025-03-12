@@ -3,12 +3,25 @@ import { HiAdjustments, HiClipboardList, HiMail, HiPhone, HiUserCircle } from "r
 import React, { useState } from 'react'
 import Link from 'next/link';
 import OTPInput from './OTPInput';
+import service from '../../service';
 
 export default function BuyerRegistrationForm() {
     const [openOTPModal, setOpenOTPModal] = useState(false)
 
     const onSigninPressed = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        console.log(service);
+
+        service.post("/api/Auth/register/send-otp", {
+            identifier: 'email',
+            otpType: 'email'
+        }).then(response => {
+            console.log(response.data);
+
+        }).catch(err => {
+            console.log(err.response);
+
+        })
         setOpenOTPModal(true)
     }
 
