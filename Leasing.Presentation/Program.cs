@@ -25,12 +25,12 @@ Serilog.Debugging.SelfLog.Enable(Console.Error); // Add at the top
 builder.Host.UseSerilog((context, configuration) =>
 {
     configuration
-        .MinimumLevel.Information()
-        .MinimumLevel.Error()
+        //.MinimumLevel.Information()
+        .MinimumLevel.Debug()
         .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
         .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
         .WriteTo.Console()
-        
+        .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
         .WriteTo.MSSqlServer(
             connectionString: context.Configuration.GetConnectionString("DefaultConnection"),
             sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs", AutoCreateSqlTable = false });
@@ -39,8 +39,8 @@ string keysPath = Path.Combine(builder.Environment.ContentRootPath, "keys");
 Directory.CreateDirectory(keysPath);
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(keysPath))
-    .SetApplicationName("Leasing")
-    .ProtectKeysWithDpapi();
+    .SetApplicationName("Leasing");
+    //.ProtectKeysWithDpapi();
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options =>

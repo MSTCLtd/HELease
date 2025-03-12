@@ -12,7 +12,11 @@ namespace Leasing.Domain.Interfaces
         Task<User> GetByUsernameAsync(string username);
         Task<User> GetByEmailAsync(string email);
         Task<User> GetByMobileNumberAsync(string mobileNumber);
-        Task<User> AddAsync(User user);
+        Task AddAsync(User user);
         Task UpdateAsync(User user);
+
+        Task<User> GetByPhoneAsync(string phone);
+      
+        Task SaveChangesAsync();
     }
 }

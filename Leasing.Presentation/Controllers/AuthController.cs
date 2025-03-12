@@ -1,93 +1,92 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Leasing.Application;
 using Leasing.Application.Interfaces;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using static Leasing.Application.Interfaces.IAuthService;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Leasing.Presentation.Controllers;
-[Route("api/[controller]")]
-[ApiController]
-public class AuthController : ControllerBase
+namespace Leasing.Presentation.Controllers
 {
-    private readonly IAuthService _authService;
-    private readonly IConfiguration _config;
-    private readonly ILogger<AuthController> _logger;
-
-    public AuthController(IAuthService authService, IConfiguration config, ILogger<AuthController> logger)
+    [ApiController]
+    [Route("api/auth")]
+    public class AuthController : ControllerBase
     {
-        _authService = authService;
-        _config = config;
-        _logger = logger; 
+        private readonly IAuthService _authService;
+
+        public AuthController(IAuthService authService)
+        {
+            _authService = authService;
+        }
+
+        [HttpPost("register/send-mobile-otp")]
+        public async Task<IActionResult> SendOtp([FromBody] SendOtpRequest request)
+        {
+            var success = await _authService.SendOtpAsync(request.Phone);
+            return success ? Ok(new { Message = "OTP sent to mobile" }) : StatusCode(500, new { Message = "Failed to send OTP" });
+        }
+
+        [HttpPost("register/verify-otp")]
+        public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
+        {
+            var (success, isNewUser, role) = await _authService.VerifyOtpAsync(request.Phone, request.OtpCode);
+            if (success)
+            {
+                if (!isNewUser)
+                {
+                    return Ok(new { Message = "User already exists", RedirectUrl = "/dashboard" });
+                }
+                return Ok(new { Message = "OTP verified", IsNewUser = isNewUser, Role = role });
+            }
+            return BadRequest(new { Message = "Invalid or expired OTP" });
+        }
+
+        [HttpPost("register/send-email-otp")]
+        public async Task<IActionResult> SendEmailOtp([FromBody] SendEmailOtpRequest request)
+        {
+            var success = await _authService.SendEmailOtpAsync(request.Email);
+            return success ? Ok(new { Message = "OTP sent to email" }) : StatusCode(500, new { Message = "Failed to send email OTP" });
+        }
+
+        [HttpPost("register/verify-email-otp")]
+        public async Task<IActionResult> VerifyEmailOtp([FromBody] VerifyEmailOtpRequest request)
+        {
+            var success = await _authService.VerifyEmailOtpAsync(request.Email, request.OtpCode, request.Phone);
+            return success ? Ok(new { Message = "Email OTP verified" }) : BadRequest(new { Message = "Invalid or expired email OTP" });
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        {
+            var (success, registrationNumber) = await _authService.RegisterAsync(request.Phone, request.Name, request.Role, request.Email);
+            return success ? Ok(new { Message = "Registration completed", RegistrationNumber = registrationNumber }) : BadRequest(new { Message = "Registration failed. Verify OTP and email first or user already registered." });
+        }
     }
 
-    [HttpPost("register/send-otp")]
-    public async Task<IActionResult> SendOtpForRegistration([FromBody] OtpRequest request)
+    public class SendOtpRequest
     {
-        await _authService.SendOtpForRegistrationAsync(request.Mobile_Email, request.OtpType);
-        return Ok("OTP sent for registration.");
+        public string Phone { get; set; }
     }
 
-    [HttpPost("register/verify-otp")]
-    public async Task<IActionResult> VerifyOtpAndRegister([FromBody] VerifyOtpRequest request)
+    public class VerifyOtpRequest
     {
-        var user = await _authService.VerifyOtpAndRegisterAsync(
-            request.Mobile_Email, request.Otp, request.OtpType,
-            new UserDetailsRequest { Name = request.Name, Email = request.Email, BusinessName = request.BusinessName });
-        return Ok(user);
+        public string Phone { get; set; }
+        public string OtpCode { get; set; }
     }
 
-    [HttpPost("login/send-otp")]
-    public async Task<IActionResult> SendOtpForLogin([FromBody] OtpRequest request)
+    public class SendEmailOtpRequest
     {
-        await _authService.SendOtpForLoginAsync(request.Mobile_Email, request.OtpType);
-        return Ok("OTP sent for login.");
+        public string Email { get; set; }
     }
 
-    [HttpPost("login/verify-otp")]
-    public async Task<IActionResult> VerifyOtpAndLogin([FromBody] VerifyOtpRequest request)
+    public class VerifyEmailOtpRequest
     {
-        var token = await _authService.VerifyOtpAndLoginAsync(request.Mobile_Email, request.Otp, request.OtpType);
-        if (token == "jwt-token-placeholder")
-            return Ok(new { Token = GenerateJwtToken(request.Mobile_Email) });
-        return Unauthorized();
+        public string Email { get; set; }
+        public string OtpCode { get; set; }
+        public string Phone { get; set; }
     }
 
-    private string GenerateJwtToken(string identifier)
+    public class RegisterRequest
     {
-        var claims = new[] { new Claim(ClaimTypes.Name, identifier) };
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var token = new JwtSecurityToken(
-            issuer: _config["Jwt:Issuer"],
-            audience: _config["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.Now.AddHours(1),
-            signingCredentials: creds);
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        public string Phone { get; set; }
+        public string Name { get; set; }
+        public string Role { get; set; }
+        public string Email { get; set; }
     }
-
-    [HttpGet("test-log")]
-    public IActionResult TestLog()
-    {
-        _logger.LogInformation("Test log entry from AuthController");
-        return Ok("Logged");
-    }
-
-    
-
-}
-
-public class OtpRequest { public string Mobile_Email { get; set; } public string OtpType { get; set; } }
-
-public class VerifyOtpRequest
-{
-    public string Mobile_Email { get; set; } // e.g. emialid, mobile number
-    public string Otp { get; set; }
-    public string OtpType { get; set; }  // sent on mail, or mobile 
-    public string Name { get; set; }
-    public string Email { get; set; }
-    public string BusinessName { get; set; }
 }

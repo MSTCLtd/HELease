@@ -28,7 +28,7 @@ namespace Leasing.Presentation.Controllers
             if (user == null)
                 return NotFound();
 
-            return Ok(new UserDto { Id = user.Id, Username = user.Username });
+            return Ok(new UserDto { Id = user.Id, Username = user.Name });
         }
     }
 }

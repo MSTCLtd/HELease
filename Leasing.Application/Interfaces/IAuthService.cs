@@ -9,11 +9,11 @@ namespace Leasing.Application.Interfaces
 {
     public interface IAuthService
     {
-        Task SendOtpForRegistrationAsync(string identifier, string otpType);
-        Task<UserDto> VerifyOtpAndRegisterAsync(string identifier, string otp, string otpType, UserDetailsRequest details);
-        Task SendOtpForLoginAsync(string identifier, string otpType);
-        Task<string> VerifyOtpAndLoginAsync(string identifier, string otp, string otpType);
-        
-        public class UserDetailsRequest { public string Name { get; set; } public string Email { get; set; } public string BusinessName { get; set; } }
+        Task<bool> SendOtpAsync(string phone);
+        Task<(bool Success, bool IsNewUser, string Role)> VerifyOtpAsync(string phone, string otpCode);
+        Task<bool> SendEmailOtpAsync(string email);
+        Task<bool> VerifyEmailOtpAsync(string email, string otpCode, string phone);
+        Task<(bool Success, string RegistrationNumber)> RegisterAsync(string phone, string name, string role, string email);
+
     }
 }
