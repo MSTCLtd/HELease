@@ -48,7 +48,7 @@ namespace Leasing.Presentation.Controllers
         public async Task<IActionResult> VerifyEmailOtp([FromBody] VerifyEmailOtpRequest request)
         {
             var success = await _authService.VerifyEmailOtpAsync(request.Email, request.OtpCode, request.Phone);
-            return success ? Ok(new { Message = "Email OTP verified" }) : BadRequest(new { Message = "Invalid or expired email OTP" });
+            return success ? Ok(new { Message = "Email OTP verified", status = true }) : BadRequest(new { Message = "Invalid or expired email OTP", status = false });
         }
 
         [HttpPost("register")]
