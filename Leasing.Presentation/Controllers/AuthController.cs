@@ -30,7 +30,7 @@ namespace Leasing.Presentation.Controllers
             {
                 if (!isNewUser)
                 {
-                    return Ok(new { Message = "User already exists", RedirectUrl = "/dashboard" });
+                    return Ok(new { Message = "User already exists", isNewUser = false });
                 }
                 return Ok(new { Message = "OTP verified", IsNewUser = isNewUser, Role = role });
             }
