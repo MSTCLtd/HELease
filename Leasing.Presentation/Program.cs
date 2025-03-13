@@ -71,7 +71,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AlloAllApp", builder =>
+    options.AddPolicy("AllowAllApp", builder =>
     {
         builder.AllowAnyOrigin() // Allow requests from any origin
                .AllowAnyHeader()
@@ -112,7 +112,7 @@ var app = builder.Build();
     app.UseSwaggerUI();
 }
 app.UseSerilogRequestLogging();
-app.UseCors("AlloAllApp");
+app.UseCors("AllowAllApp");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
