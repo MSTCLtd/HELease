@@ -30,11 +30,11 @@ namespace Leasing.Presentation.Controllers
             {
                 if (!isNewUser)
                 {
-                    return Ok(new { Message = "User already exists", isNewUser = false });
+                    return Ok(new { Message = "User already exists", isNewUser = false, status = false });
                 }
-                return Ok(new { Message = "OTP verified", IsNewUser = isNewUser, Role = role });
+                return Ok(new { Message = "OTP verified", IsNewUser = isNewUser, Role = role, status = true });
             }
-            return BadRequest(new { Message = "Invalid or expired OTP" });
+            return BadRequest(new { Message = "Invalid or expired OTP", status = false });
         }
 
         [HttpPost("register/send-email-otp")]
