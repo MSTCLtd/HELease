@@ -112,7 +112,7 @@ var app = builder.Build();
     app.UseSwaggerUI();
 }
 app.UseSerilogRequestLogging();
-app.UseCors("AllowAll");
+app.UseCors("AlloAllApp");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
