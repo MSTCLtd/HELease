@@ -1,6 +1,7 @@
 ﻿using Leasing.Application;
 using Leasing.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace Leasing.Presentation.Controllers
 {
@@ -25,12 +26,12 @@ namespace Leasing.Presentation.Controllers
         [HttpPost("register/verify-otp")]
         public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
         {
-            var (success, isNewUser, role) = await _authService.VerifyOtpAsync(request.Phone, request.OtpCode);
+            var(success, isNewUser, role, token) = await _authService.VerifyOtpAsync(request.Phone, request.OtpCode);
             if (success)
             {
                 if (!isNewUser)
                 {
-                    return Ok(new { Message = "User already exists", isNewUser = false, status = false });
+                    return Ok(new { Message = "User already exists", isNewUser = false, status = false, Token = token });
                 }
                 return Ok(new { Message = "OTP verified", IsNewUser = isNewUser, Role = role, status = true });
             }
@@ -54,8 +55,8 @@ namespace Leasing.Presentation.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            var (success, registrationNumber) = await _authService.RegisterAsync(request.Phone, request.Name, request.Role, request.Email);
-            return success ? Ok(new { Message = "Registration completed", RegistrationNumber = registrationNumber }) : BadRequest(new { Message = "Registration failed. Verify OTP and email first or user already registered." });
+            var (success, registrationNumber, token) = await _authService.RegisterAsync(request.Phone, request.Name, request.Role, request.Email);
+            return success ? Ok(new { Message = "Registration completed", RegistrationNumber = registrationNumber, Token = token }) : BadRequest(new { Message = "Registration failed. Verify OTP and email first or user already registered." });
         }
     }
 

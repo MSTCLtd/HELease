@@ -8,6 +8,10 @@ using Leasing.Application.Interfaces;
 using System;
 using static Leasing.Application.Interfaces.IAuthService;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Leasing.Application.Services;
 public class AuthService : IAuthService
@@ -69,14 +73,14 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<(bool Success, bool IsNewUser, string Role)> VerifyOtpAsync(string phone, string otpCode)
+    public async Task<(bool Success, bool IsNewUser, string Role, string Token)> VerifyOtpAsync(string phone, string otpCode)
     {
         _logger.LogDebug("VerifyOtpAsync called with phone: {Phone}, otpCode: {OtpCode}", phone, otpCode);
 
         if (string.IsNullOrWhiteSpace(phone))
         {
             _logger.LogWarning("Invalid phone number provided");
-            return (false, false, null);
+            return (false, false, null,null);
         }
 
         if (!phone.StartsWith("+")) phone = "+91" + phone.TrimStart('0');
@@ -87,13 +91,13 @@ public class AuthService : IAuthService
         if (otpCode !="123456")
         {
             _logger.LogWarning("Invalid or expired OTP for {Phone}", phone);
-            return (false, false, null);
+            return (false, false, null,null);
         }
 
         _cache.Remove(cacheKey);
         var user = await _userRepository.GetByPhoneAsync(phone);
         bool isNewUser = user == null;
-
+        string token = null;
         if (isNewUser)
         {
             user = new User { Phone = phone, IsVerified = true, CreatedAt = DateTime.UtcNow };
@@ -105,6 +109,12 @@ public class AuthService : IAuthService
             user.UpdatedAt = DateTime.UtcNow;
             await _userRepository.UpdateAsync(user);
         }
+        else
+        {
+            // Generate JWT token for existing user (login scenario)
+            token = GenerateJwtToken(user);
+            _logger.LogInformation("User with phone {Phone} logged in successfully", phone);
+        }
 
         try
         {
@@ -113,11 +123,11 @@ public class AuthService : IAuthService
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Failed to save user with phone {Phone} due to duplicate key", phone);
-            return (false, false, null);
+            return (false, false, null,null);
         }
 
         _logger.LogInformation("User with phone {Phone} verified. IsNewUser: {IsNewUser}, Role: {Role}", phone, isNewUser, user?.Role);
-        return (true, isNewUser, user?.Role);
+        return (true, isNewUser, user?.Role, token);
     }
 
     public async Task<bool> SendEmailOtpAsync(string email)
@@ -196,28 +206,28 @@ public class AuthService : IAuthService
         return true;
     }
 
-    public async Task<(bool Success, string RegistrationNumber)> RegisterAsync(string phone, string name, string role, string email)
+    public async Task<(bool Success, string RegistrationNumber, string Token)> RegisterAsync(string phone, string name, string role, string email)
     {
         _logger.LogDebug("RegisterAsync called with phone: {Phone}, name: {Name}, role: {Role}, email: {Email}", phone, name, role, email);
 
         if (!IsValidRole(role))
         {
             _logger.LogWarning("Invalid role {Role} for phone {Phone}", role, phone);
-            return (false, null);
+            return (false, null, null);
         }
 
         if (!phone.StartsWith("+")) phone = "+91" + phone.TrimStart('0');
         if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
         {
             _logger.LogWarning("Invalid email {Email} for phone {Phone}", email, phone);
-            return (false, null);
+            return (false, null, null);
         }
 
         var user = await _userRepository.GetByPhoneAsync(phone);
         if (user == null || !user.IsVerified || !user.IsEmailVerified || !string.IsNullOrEmpty(user.RegistrationNumber))
         {
             _logger.LogWarning("Registration failed for {Phone}: not verified, email not verified, or already registered", phone);
-            return (false, null);
+            return (false, null, null);
         }
 
         // Check if the email is already in use by another user
@@ -225,7 +235,7 @@ public class AuthService : IAuthService
         if (existingUserWithEmail != null && existingUserWithEmail.Phone != phone)
         {
             _logger.LogWarning("Email {Email} is already registered to another user", email);
-            return (false, null);
+            return (false, null, null);
         }
 
         // Update the user with the email, name, and role
@@ -242,7 +252,7 @@ public class AuthService : IAuthService
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Registration failed for phone {Phone} or email {Email} due to duplicate key", phone, email);
-            return (false, null);
+            return (false, null, null);
         }
 
         // Generate the registration number
@@ -250,9 +260,34 @@ public class AuthService : IAuthService
         user.RegistrationNumber = $"{prefix}{user.Id:D6}";
         await _userRepository.UpdateAsync(user);
         await _userRepository.SaveChangesAsync();
-
+        var token = GenerateJwtToken(user);
         _logger.LogInformation("User {Phone} completed registration. Role: {Role}, RegistrationNumber: {RegNum}", phone, role, user.RegistrationNumber);
-        return (true, user.RegistrationNumber);
+        return(true, user.RegistrationNumber, token);
+    }
+
+    private string GenerateJwtToken(User user)
+    {
+        var claims = new[]
+        {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Name ?? ""),
+                new Claim(ClaimTypes.Email, user.Email ?? ""),
+                new Claim("Phone", user.Phone),
+                new Claim("RegistrationNumber", user.RegistrationNumber ?? "")
+
+            };
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.Now.AddMinutes(Convert.ToDouble(_configuration["Jwt:ExpiryMinutes"])),
+            signingCredentials: creds);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
     private bool IsValidEmail(string email)
