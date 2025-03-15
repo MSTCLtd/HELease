@@ -73,14 +73,14 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<(bool Success, bool IsNewUser, string Role, string Token)> VerifyOtpAsync(string phone, string otpCode)
+    public async Task<(bool Success, bool IsNewUser, string Role, string Token, string email, string name)> VerifyOtpAsync(string phone, string otpCode)
     {
         _logger.LogDebug("VerifyOtpAsync called with phone: {Phone}, otpCode: {OtpCode}", phone, otpCode);
 
         if (string.IsNullOrWhiteSpace(phone))
         {
             _logger.LogWarning("Invalid phone number provided");
-            return (false, false, null,null);
+            return (false, false, null,null, null, null);
         }
 
         if (!phone.StartsWith("+")) phone = "+91" + phone.TrimStart('0');
@@ -91,7 +91,7 @@ public class AuthService : IAuthService
         if (otpCode !="123456")
         {
             _logger.LogWarning("Invalid or expired OTP for {Phone}", phone);
-            return (false, false, null,null);
+            return (false, false, null, null,null, null);
         }
 
         _cache.Remove(cacheKey);
@@ -123,11 +123,11 @@ public class AuthService : IAuthService
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Failed to save user with phone {Phone} due to duplicate key", phone);
-            return (false, false, null,null);
+            return (false, false, null,null, null, null);
         }
 
-        _logger.LogInformation("User with phone {Phone} verified. IsNewUser: {IsNewUser}, Role: {Role}", phone, isNewUser, user?.Role);
-        return (true, isNewUser, user?.Role, token);
+        _logger.LogInformation("User with phone {Phone} verified. IsNewUser: {IsNewUser}, Role: {Role}", phone, isNewUser, user?.Role, user.Email, user.Name);
+        return (true, isNewUser, user?.Role, token ,user?.Email, user?.Name);
     }
 
     public async Task<bool> SendEmailOtpAsync(string email)
