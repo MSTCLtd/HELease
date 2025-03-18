@@ -1,6 +1,7 @@
 ﻿using Leasing.Application;
 using Leasing.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace Leasing.Presentation.Controllers
 {
@@ -25,16 +26,16 @@ namespace Leasing.Presentation.Controllers
         [HttpPost("register/verify-otp")]
         public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
         {
-            var (success, isNewUser, role) = await _authService.VerifyOtpAsync(request.Phone, request.OtpCode);
+            var(success, isNewUser, role, token,email,name) = await _authService.VerifyOtpAsync(request.Phone, request.OtpCode);
             if (success)
             {
                 if (!isNewUser)
                 {
-                    return Ok(new { Message = "User already exists", RedirectUrl = "/dashboard" });
+                    return Ok(new { Message = "User already exists", isNewUser = false, status = false, Token = token, email,name });
                 }
-                return Ok(new { Message = "OTP verified", IsNewUser = isNewUser, Role = role });
+                return Ok(new { Message = "OTP verified", IsNewUser = isNewUser, Role = role, status = true, email, name });
             }
-            return BadRequest(new { Message = "Invalid or expired OTP" });
+            return BadRequest(new { Message = "Invalid or expired OTP", status = false });
         }
 
         [HttpPost("register/send-email-otp")]
@@ -48,14 +49,14 @@ namespace Leasing.Presentation.Controllers
         public async Task<IActionResult> VerifyEmailOtp([FromBody] VerifyEmailOtpRequest request)
         {
             var success = await _authService.VerifyEmailOtpAsync(request.Email, request.OtpCode, request.Phone);
-            return success ? Ok(new { Message = "Email OTP verified" }) : BadRequest(new { Message = "Invalid or expired email OTP" });
+            return success ? Ok(new { Message = "Email OTP verified", status = true }) : BadRequest(new { Message = "Invalid or expired email OTP", status = false });
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            var (success, registrationNumber) = await _authService.RegisterAsync(request.Phone, request.Name, request.Role, request.Email);
-            return success ? Ok(new { Message = "Registration completed", RegistrationNumber = registrationNumber }) : BadRequest(new { Message = "Registration failed. Verify OTP and email first or user already registered." });
+            var (success, registrationNumber, token) = await _authService.RegisterAsync(request.Phone, request.Name, request.Role, request.Email);
+            return success ? Ok(new { Message = "Registration completed", RegistrationNumber = registrationNumber, Token = token, email = request.Email, name = request.Name }) : BadRequest(new { Message = "Registration failed. Verify OTP and email first or user already registered." });
         }
     }
 
