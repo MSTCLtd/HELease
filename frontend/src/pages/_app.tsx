@@ -10,6 +10,10 @@ import { REHYDRATE } from "redux-persist";
 import { persistStore } from "redux-persist";
 import Logo from "@/components/Logo";
 import { appWithTranslation } from 'next-i18next'
+import type { CustomFlowbiteTheme } from "flowbite-react";
+import { Flowbite } from "flowbite-react";
+import settings from '../../tailwind.config'
+
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -43,6 +47,14 @@ function Loader() {
 	</div>
 }
 
+const customTheme: CustomFlowbiteTheme = {
+	button: {
+		color: {
+			primary: 'group relative flex items-stretch justify-center p-0.5 text-center font-medium transition-[color,background-color,border-color,text-decoration-color,fill,stroke,box-shadow] focus:z-10 focus:outline-none border border-transparent bg-blue-700 text-white focus:ring-4 focus:ring-blue-300 enabled:hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 rounded-lg w-full'
+		}
+	}
+}
+
 const App = ({ Component, pageProps }: AppProps) => {
 	useEffect(() => {
 		persistor.dispatch({
@@ -55,9 +67,11 @@ const App = ({ Component, pageProps }: AppProps) => {
 
 	return <Provider store={store}>
 		<PersistGate loading={<Loader />} persistor={persistor}>
-			<main className={`${geistSans.className} ${geistMono.variable} ${bakbak.variable} ${biryani.variable}`}>
-				<Component {...pageProps} />
-			</main>
+			<Flowbite theme={{ theme: customTheme }}>
+				<main className={`${geistSans.className} ${geistMono.variable} ${bakbak.variable} ${biryani.variable}`}>
+					<Component {...pageProps} />
+				</main>
+			</Flowbite>
 		</PersistGate>
 	</Provider>
 }

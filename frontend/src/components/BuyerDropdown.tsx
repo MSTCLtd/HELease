@@ -1,11 +1,13 @@
 import { Avatar, Dropdown } from 'flowbite-react'
 import React from 'react'
 import { HiCog, HiCurrencyDollar, HiLogout, HiViewGrid } from 'react-icons/hi'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { HELActions } from '../../store'
 
 export default function BuyerDropdown() {
     const dispatch = useDispatch()
+    const { user } = useSelector((state: any) => state.HELReducer)
+
 
     const signOut = () => {
         dispatch(HELActions.setUser(null))
@@ -13,10 +15,10 @@ export default function BuyerDropdown() {
     }
 
     return (
-        <Dropdown dismissOnClick={false} renderTrigger={() => <Avatar placeholderInitials="RR" rounded bordered className='cursor-pointer' />}>
+        <Dropdown dismissOnClick={false} arrowIcon={true} placement='bottom-end' renderTrigger={() => <Avatar placeholderInitials={user?.name?.split(" ")[0][0] + "" + user?.name?.split(" ").reverse()[0][0]} rounded bordered className='cursor-pointer' />}>
             <Dropdown.Header>
-                <span className="block text-sm">Bonnie Green</span>
-                <span className="block truncate text-sm font-medium">bonnie@flowbite.com</span>
+                <span className="block text-base font-bold">{user.name}</span>
+                <span className="block truncate text-slate-400 font-medium">{user.email}</span>
             </Dropdown.Header>
             <Dropdown.Item icon={HiViewGrid}>Dashboard</Dropdown.Item>
             <Dropdown.Item icon={HiCog}>Settings</Dropdown.Item>

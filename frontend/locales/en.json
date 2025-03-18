@@ -1,4 +1,10 @@
 {
+    "root": {
+        "buyer": "Buyer",
+        "seller": "Seller",
+        "next": "Next",
+        "proceed": "Proceed"
+    },
     "home": {
         "name": "Upkaran",
         "home": "Home",
@@ -15,5 +21,17 @@
         "para3": "Our Mission: Our mission is to provide businesses with access to premium tools and machinery at competitive prices. By ensuring exceptional quality, seamless service, and prompt delivery, we aim to become the trusted partner for industries across India and beyond.",
         "para4": "Our Commitment to Excellence: At Upkaran, we understand the critical role tools and machinery play in driving industrial success. That's why we strive to deliver excellence in every product and service, building long-term relationships with our customers based on trust and reliability.",
         "para5": "We value our customers and are always here to help. For inquiries, feedback, or support, feel free to contact OUR TEAM."
+    },
+    "login": {
+        "maintitle": "Login or Create your account",
+        "regas": "Register as",
+        "mobile": "Mobile",
+        "mobileotp": "Mobile OTP",
+        "10digit": "10 digit mobile no",
+        "otpmobile": "Enter OTP sent to Mobile",
+        "otpemail": "Enter OTP sent to Email",
+        "details": "Enter further details",
+        "buyertag": "Explore product catalogs and purchase",
+        "sellertag": "List and sell your products"
     }
 }
