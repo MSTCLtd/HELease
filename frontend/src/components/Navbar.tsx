@@ -247,6 +247,11 @@ export default function Navbar() {
                                 {t('home.msme')}
                             </Link>
                         </li>
+                        <li className="shrink-0 hidden sm:flex">
+                            <Link href="/market" title="" className="text-gray-900 hover:text-primary-700 dark:text-white dark:hover:text-primary-500">
+                                Market
+                            </Link>
+                        </li>
                     </ul>
                     <div className="py-3 flex items-center">
                         <button type="button" data-dropdown-toggle="ecommerce-navbar-menu-2" className="ms-4 inline-flex items-center justify-center lg:hidden hover:bg-gray-100 rounded-md hover:text-gray-900 dark:hover:bg-gray-700 p-1 text-gray-500 dark:text-white">

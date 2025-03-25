@@ -13,7 +13,7 @@ import { appWithTranslation } from 'next-i18next'
 import type { CustomFlowbiteTheme } from "flowbite-react";
 import { Flowbite } from "flowbite-react";
 import settings from '../../tailwind.config'
-
+import "@elastic/react-search-ui-views/lib/styles/styles.css";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
