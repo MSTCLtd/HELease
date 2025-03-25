@@ -21,7 +21,7 @@ namespace Leasing.Infrastructure.Repositories
 
         public async Task<User> GetByUsernameAsync(string username)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Name == username);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
         }
 
         //public async Task<User> AddAsync(User user)
@@ -45,7 +45,10 @@ namespace Leasing.Infrastructure.Repositories
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-       
+        public async Task<User> GetByIdAsync(int id)
+        {
+            return await _context.Users.FindAsync(id);
+        }
 
         public async Task<User> GetByPhoneAsync(string phone)
         {
@@ -66,6 +69,34 @@ namespace Leasing.Infrastructure.Repositories
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<User>> GetAllAsync()
+        {
+            return await _context.Set<User>().ToListAsync();
+        }
+
+        public async Task<List<User>> GetUsersByRoBoAsync(string roBo)
+        {
+            return await _context.Set<User>()
+                .Where(u => u.Role == "MSTC" && u.RoBo == roBo)
+                .ToListAsync();
+        }
+
+        public async Task<List<User>> GetAllMstcUsersAsync()
+        {
+            return await _context.Set<User>()
+                .Where(u => u.Role == "MSTC")
+                .ToListAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var user = await GetByIdAsync(id);
+            if (user != null)
+            {
+                _context.Set<User>().Remove(user);
+            }
         }
     }
 }

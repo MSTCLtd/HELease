@@ -1,7 +1,9 @@
 ﻿using Leasing.Application;
 using Leasing.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
+using System.Security.Claims;
 
 namespace Leasing.Presentation.Controllers
 {
@@ -58,6 +60,82 @@ namespace Leasing.Presentation.Controllers
             var (success, registrationNumber, token) = await _authService.RegisterAsync(request.Phone, request.Name, request.Role, request.Email);
             return success ? Ok(new { Message = "Registration completed", RegistrationNumber = registrationNumber, Token = token, email = request.Email, name = request.Name }) : BadRequest(new { Message = "Registration failed. Verify OTP and email first or user already registered." });
         }
+
+        [HttpPost("login/username")]
+        public async Task<IActionResult> LoginWithUsername([FromBody] UsernameLoginRequest request)
+        {
+            var (success, message, tempToken, user) = await _authService.LoginWithUsernameAsync(request.Username, request.Password);
+            if (!success)
+            {
+                return BadRequest(new { Message = message });
+            }
+
+            // Send OTP to both email and mobile
+            var (otpSuccess, otpMessage, otp) = await _authService.SendOtpToBothAsync(user.Id);
+            if (!otpSuccess)
+            {
+                return StatusCode(500, new { Message = otpMessage });
+            }
+
+            return Ok(new { Message = message, TempToken = tempToken, UserId = user.Id, OtpSent = true });
+        }
+
+        [HttpPost("verify-login-otp")]
+        public async Task<IActionResult> VerifyLoginOtp([FromBody] VerifyLoginOtpRequest request)
+        {
+            var (success, message, token) = await _authService.VerifyOtpForLoginAsync(request.UserId, request.Otp);
+            if (!success)
+            {
+                return BadRequest(new { Message = message });
+            }
+            return Ok(new { Message = message, Token = token });
+        }
+
+        [HttpPost("register/mstc-admin")]
+        //[Authorize(Roles = "MSTC")]
+        public async Task<IActionResult> RegisterMstcAdmin([FromBody] RegisterMstcAdminRequest request)
+        {
+            // Optional: Check permissions of the requester
+            var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var requester = await _authService.GetUserByIdAsync(requesterId);
+            if (!requester.Permissions.Contains("ManageUsers"))
+            {
+                return Forbid("You do not have permission to register MSTC admins");
+            }
+
+            var (success, message, user) = await _authService.RegisterMstcAdminAsync(
+                request.Username,
+                request.Password,
+                request.Email,
+                request.Phone,
+                request.Name,
+                request.RoBo,
+                request.Permissions
+            );
+
+            if (!success)
+            {
+                return BadRequest(new { Message = message });
+            }
+
+            return Ok(new
+            {
+                Message = message,
+                User = new
+                {
+                    user.Id,
+                    user.Username,
+                    user.Email,
+                    user.Phone,
+                    user.Name,
+                    user.Role,
+                    user.RoBo,
+                    user.Permissions,
+                    user.RegistrationNumber
+                }
+            });
+        }
+
     }
 
     public class SendOtpRequest
@@ -89,5 +167,33 @@ namespace Leasing.Presentation.Controllers
         public string Name { get; set; }
         public string Role { get; set; }
         public string Email { get; set; }
+    }
+    public class UpdateProfileRequest
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+    }
+    public class UsernameLoginRequest
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+
+    // New Request Model for OTP Verification
+    public class VerifyLoginOtpRequest
+    {
+        public int UserId { get; set; }
+        public string Otp { get; set; }
+    }
+
+    public class RegisterMstcAdminRequest
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string Name { get; set; }
+        public string RoBo { get; set; }
+        public List<string> Permissions { get; set; }
     }
 }

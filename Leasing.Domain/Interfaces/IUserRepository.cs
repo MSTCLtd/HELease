@@ -18,5 +18,11 @@ namespace Leasing.Domain.Interfaces
         Task<User> GetByPhoneAsync(string phone);
       
         Task SaveChangesAsync();
+        Task<User> GetByIdAsync(int id); // New method
+
+        Task<List<User>> GetAllAsync();
+        Task<List<User>> GetUsersByRoBoAsync(string roBo);
+        Task<List<User>> GetAllMstcUsersAsync();
+        Task DeleteAsync(int id); // New method to delete a user
     }
 }
