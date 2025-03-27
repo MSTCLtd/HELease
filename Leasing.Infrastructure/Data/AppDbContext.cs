@@ -17,6 +17,10 @@ namespace Leasing.Infrastructure.Data
         //public DbSet<Equipment> Equipments { get; set; }
         public DbSet<EquipmentCategory> EquipmentCategories { get; set; }
         public DbSet<EquipmentType> EquipmentTypes { get; set; }
+        public DbSet<BillingReport> BillingReports { get; set; }
+        public DbSet<Location> Locations { get; set; }
+        public DbSet<Product> Products { get; set; } 
+        public DbSet<Image> Images { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)

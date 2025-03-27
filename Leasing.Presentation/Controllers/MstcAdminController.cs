@@ -1,4 +1,5 @@
-﻿using Leasing.Application.Interfaces;
+﻿using Leasing.Application.DTOs;
+using Leasing.Application.Interfaces;
 using Leasing.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,14 +16,17 @@ namespace Leasing.Presentation.Controllers
         private readonly IMstcAdminService _mstcAdminService;
         private readonly IAuthService _authService;
         private readonly IEquipmentTypeService _equipmentTypeService;
-
+        private readonly ILocationService _locationService;
+        private readonly IBillingReportService _billingReportService;
         public MstcAdminController(
             IMstcAdminService mstcAdminService,
-            IAuthService authService, IEquipmentTypeService equipmentTypeService)
+            IAuthService authService, IEquipmentTypeService equipmentTypeService, ILocationService locationService, IBillingReportService billingReportService)
         {
             _mstcAdminService = mstcAdminService ?? throw new ArgumentNullException(nameof(mstcAdminService));
             _authService = authService ?? throw new ArgumentNullException(nameof(authService));
             _equipmentTypeService = equipmentTypeService ?? throw new ArgumentNullException(nameof(equipmentTypeService));
+            _locationService = locationService ?? throw new ArgumentNullException(nameof(locationService));
+            _billingReportService = billingReportService ?? throw new ArgumentNullException(nameof(billingReportService));
         }
 
         [HttpGet("users")]
@@ -467,7 +471,30 @@ namespace Leasing.Presentation.Controllers
             //}
 
             var equipmentTypes = await _equipmentTypeService.GetAllEquipmentTypesAsync();
-            return Ok(new { EquipmentTypes = equipmentTypes });
+            var equipmentTypeDtos = equipmentTypes.Select(et => new EquipmentTypeDto
+            {
+                Id = et.Id,
+                SystemId = et.SystemId,
+                Name = et.Name,
+                Code = et.Code,
+                IsActive = et.IsActive,
+                CreatedAt = et.CreatedAt,
+                UpdatedAt = et.UpdatedAt,
+                Categories = et.Categories.Select(c => new EquipmentCategoryDto
+                {
+                    Id = c.Id,
+                    EquipmentTypeId = c.EquipmentTypeId,
+                    Level1 = c.Level1,
+                    Level2 = c.Level2,
+                    Level3 = c.Level3,
+                    Level4 = c.Level4,
+                    Level5 = c.Level5,
+                    CreatedAt = c.CreatedAt,
+                    UpdatedAt = c.UpdatedAt
+                }).ToList()
+            }).ToList();
+
+            return Ok(new { EquipmentTypes = equipmentTypeDtos });
         }
 
         [HttpGet("equipment-types/{id}")]
@@ -485,7 +512,30 @@ namespace Leasing.Presentation.Controllers
             {
                 return NotFound(new { Message = "Equipment type not found" });
             }
-            return Ok(new { EquipmentType = equipmentType });
+
+            var equipmentTypeDto = new EquipmentTypeDto
+            {
+                Id = equipmentType.Id,
+                SystemId = equipmentType.SystemId,
+                Name = equipmentType.Name,
+                Code = equipmentType.Code,
+                IsActive = equipmentType.IsActive,
+                CreatedAt = equipmentType.CreatedAt,
+                UpdatedAt = equipmentType.UpdatedAt,
+                Categories = equipmentType.Categories.Select(c => new EquipmentCategoryDto
+                {
+                    Id = c.Id,
+                    EquipmentTypeId = c.EquipmentTypeId,
+                    Level1 = c.Level1,
+                    Level2 = c.Level2,
+                    Level3 = c.Level3,
+                    Level4 = c.Level4,
+                    Level5 = c.Level5,
+                    CreatedAt = c.CreatedAt,
+                    UpdatedAt = c.UpdatedAt
+                }).ToList()
+            };
+            return Ok(new { EquipmentType = equipmentTypeDto });
         }
 
         [HttpPost("equipment-types")]
@@ -508,8 +558,30 @@ namespace Leasing.Presentation.Controllers
             {
                 return BadRequest(new { Message = message });
             }
+            var equipmentTypeDto = new EquipmentTypeDto
+            {
+                Id = equipmentType.Id,
+                SystemId = equipmentType.SystemId,
+                Name = equipmentType.Name,
+                Code = equipmentType.Code,
+                IsActive = equipmentType.IsActive,
+                CreatedAt = equipmentType.CreatedAt,
+                UpdatedAt = equipmentType.UpdatedAt,
+                Categories = equipmentType.Categories.Select(c => new EquipmentCategoryDto
+                {
+                    Id = c.Id,
+                    EquipmentTypeId = c.EquipmentTypeId,
+                    Level1 = c.Level1,
+                    Level2 = c.Level2,
+                    Level3 = c.Level3,
+                    Level4 = c.Level4,
+                    Level5 = c.Level5,
+                    CreatedAt = c.CreatedAt,
+                    UpdatedAt = c.UpdatedAt
+                }).ToList()
+            };
 
-            return Ok(new { Message = message, EquipmentType = equipmentType });
+            return Ok(new { Message = message, EquipmentType = equipmentTypeDto });
         }
 
         [HttpPut("equipment-types/{id}")]
@@ -533,8 +605,30 @@ namespace Leasing.Presentation.Controllers
             {
                 return BadRequest(new { Message = message });
             }
+            var equipmentTypeDto = new EquipmentTypeDto
+            {
+                Id = equipmentType.Id,
+                SystemId = equipmentType.SystemId,
+                Name = equipmentType.Name,
+                Code = equipmentType.Code,
+                IsActive = equipmentType.IsActive,
+                CreatedAt = equipmentType.CreatedAt,
+                UpdatedAt = equipmentType.UpdatedAt,
+                Categories = equipmentType.Categories.Select(c => new EquipmentCategoryDto
+                {
+                    Id = c.Id,
+                    EquipmentTypeId = c.EquipmentTypeId,
+                    Level1 = c.Level1,
+                    Level2 = c.Level2,
+                    Level3 = c.Level3,
+                    Level4 = c.Level4,
+                    Level5 = c.Level5,
+                    CreatedAt = c.CreatedAt,
+                    UpdatedAt = c.UpdatedAt
+                }).ToList()
+            };
 
-            return Ok(new { Message = message, EquipmentType = equipmentType });
+            return Ok(new { Message = message, EquipmentType = equipmentTypeDto });
         }
 
         [HttpPost("equipment-types/{equipmentTypeId}/categories")]
@@ -560,8 +654,20 @@ namespace Leasing.Presentation.Controllers
             {
                 return BadRequest(new { Message = message });
             }
+            var categoryDto = new EquipmentCategoryDto
+            {
+                Id = category.Id,
+                EquipmentTypeId = category.EquipmentTypeId,
+                Level1 = category.Level1,
+                Level2 = category.Level2,
+                Level3 = category.Level3,
+                Level4 = category.Level4,
+                Level5 = category.Level5,
+                CreatedAt = category.CreatedAt,
+                UpdatedAt = category.UpdatedAt
+            };
 
-            return Ok(new { Message = message, Category = category });
+            return Ok(new { Message = message, Category = categoryDto });
         }
 
         [HttpPut("equipment-types/categories/{categoryId}")]
@@ -587,8 +693,20 @@ namespace Leasing.Presentation.Controllers
             {
                 return BadRequest(new { Message = message });
             }
+            var categoryDto = new EquipmentCategoryDto
+            {
+                Id = category.Id,
+                EquipmentTypeId = category.EquipmentTypeId,
+                Level1 = category.Level1,
+                Level2 = category.Level2,
+                Level3 = category.Level3,
+                Level4 = category.Level4,
+                Level5 = category.Level5,
+                CreatedAt = category.CreatedAt,
+                UpdatedAt = category.UpdatedAt
+            };
 
-            return Ok(new { Message = message, Category = category });
+            return Ok(new { Message = message, Category = categoryDto });
         }
 
         [HttpDelete("equipment-types/categories/{categoryId}")]
@@ -656,6 +774,111 @@ namespace Leasing.Presentation.Controllers
 
                 return Ok(new { Message = message, Categories = categories });
             }
+        }
+
+        [HttpGet("export-locations")]
+        public async Task<IActionResult> ExportLocations()
+        {
+            var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var requester = await _mstcAdminService.GetMstcUserByIdAsync(requesterId);
+            if (!requester.Permissions.Contains("Location Master"))
+            {
+                return Forbid("You do not have permission to manage Location Master");
+            }
+
+            var (success, message, fileContent) = await _locationService.ExportLocationsToExcelAsync();
+            if (!success)
+            {
+                return BadRequest(new { Message = message });
+            }
+
+            return File(fileContent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Locations.xlsx");
+        }
+
+        [HttpPost("import-locations")]
+        public async Task<IActionResult> ImportLocations(IFormFile file)
+        {
+            var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var requester = await _mstcAdminService.GetMstcUserByIdAsync(requesterId);
+            if (!requester.Permissions.Contains("Location Master"))
+            {
+                return Forbid("You do not have permission to manage Location Master");
+            }
+
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest(new { Message = "No file uploaded" });
+            }
+
+            using (var stream = new MemoryStream())
+            {
+                await file.CopyToAsync(stream);
+                var fileContent = stream.ToArray();
+                var (success, message) = await _locationService.ImportLocationsFromExcelAsync(fileContent);
+                if (!success)
+                {
+                    return BadRequest(new { Message = message });
+                }
+
+                return Ok(new { Message = message });
+            }
+        }
+
+        [HttpGet("billing-report/robo-list")]
+        public async Task<IActionResult> GetBillingReportRoBoList()
+        {
+            var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var requester = await _mstcAdminService.GetMstcUserByIdAsync(requesterId);
+            if (!requester.Permissions.Contains("Billing Report"))
+            {
+                return Forbid("You do not have permission to access Billing Report");
+            }
+
+            var roBoList = await _billingReportService.GetRoBoListAsync();
+            return Ok(new { RoBoList = roBoList });
+        }
+
+        [HttpGet("billing-report")]
+        public async Task<IActionResult> GetBillingReport([FromQuery] string roBo, [FromQuery] string month, [FromQuery] int year)
+        {
+            var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var requester = await _mstcAdminService.GetMstcUserByIdAsync(requesterId);
+            if (!requester.Permissions.Contains("Billing Report"))
+            {
+                return Forbid("You do not have permission to access Billing Report");
+            }
+
+            var (success, message, reports, totalBasicAmount, totalWithGst) = await _billingReportService.GetBillingReportsAsync(roBo, month, year);
+            if (!success)
+            {
+                return BadRequest(new { Message = message });
+            }
+
+            return Ok(new
+            {
+                Reports = reports,
+                TotalBasicAmount = totalBasicAmount,
+                TotalWithGst = totalWithGst
+            });
+        }
+
+        [HttpGet("billing-report/export")]
+        public async Task<IActionResult> ExportBillingReport([FromQuery] string roBo, [FromQuery] string month, [FromQuery] int year)
+        {
+            var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var requester = await _mstcAdminService.GetMstcUserByIdAsync(requesterId);
+            if (!requester.Permissions.Contains("Billing Report"))
+            {
+                return Forbid("You do not have permission to access Billing Report");
+            }
+
+            var (success, message, fileContent) = await _billingReportService.ExportBillingReportsToExcelAsync(roBo, month, year);
+            if (!success)
+            {
+                return BadRequest(new { Message = message });
+            }
+
+            return File(fileContent, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"BillingReport_{roBo}_{month}_{year}.xlsx");
         }
     }
 
