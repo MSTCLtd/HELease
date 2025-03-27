@@ -67,7 +67,8 @@ namespace Leasing.Presentation.Controllers
             var (success, message, tempToken, user) = await _authService.LoginWithUsernameAsync(request.Username, request.Password);
             if (!success)
             {
-                return BadRequest(new { Message = message });
+                return StatusCode(500, new { Message = message });
+                //return BadRequest(new { Message = message });
             }
 
             // Send OTP to both email and mobile
