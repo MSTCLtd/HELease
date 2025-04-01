@@ -24,7 +24,7 @@ export default function MarketNavbar() {
                 </>}
                 <Navbar.Toggle />
             </div>
-            <Navbar.Collapse>
+            {/* <Navbar.Collapse> */}
                 <SearchBox
                     autocompleteMinimumCharacters={3}
                     autocompleteResults={{
@@ -36,9 +36,9 @@ export default function MarketNavbar() {
                     }}
                     autocompleteSuggestions={true}
                     debounceLength={0}
-                    className='w-full'
+                    className='!min-w-fit !font-bakbak'
                 />
-            </Navbar.Collapse>
+            {/* </Navbar.Collapse> */}
         </Navbar>
     )
 }

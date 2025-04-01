@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
 import mstclogo from '../../assets/applogo.png'
+import Link from 'next/link'
 
 export default function Footer() {
     return (
@@ -90,6 +91,9 @@ export default function Footer() {
                             </li>
                             <li className="mb-4">
                                 <a href="#" className="hover:underline">Terms</a>
+                            </li>
+                            <li className="mb-4">
+                                <Link href="/mstcadmin/login" className="hover:underline">Admin Login</Link>
                             </li>
                         </ul>
                     </div>

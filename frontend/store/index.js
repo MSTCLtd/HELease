@@ -7,11 +7,15 @@ const HELSlice = createSlice({
     name: 'HELSlice',
     initialState: {
         user: null,
+        adminUser: null,
         language: 'en'
     },
     reducers: {
         setUser(state, payload) {
             state.user = payload.payload
+        },
+        setAdminUser(state, payload) {
+            state.adminUser = payload.payload
         },
         setLanguage(state, payload) {
             state.language = payload.payload
