@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import logo from '../../assets/logo.png'
+import logo2 from '../../assets/upkaran_logo2.png'
 import { useTranslation } from '../../hooks/useTranslation';
 
 export default function Logo() {
@@ -11,7 +11,7 @@ export default function Logo() {
             <Link href="/">
                 <div className="grid grid-flow-col ">
                     <div className="row-span-3 mr-2">
-                        <Image src={logo} alt="logo" width={65} />
+                        <Image src={logo2} alt="logo" width={65} />
                     </div>
                     <div className="col-span-2">
                         <span className="font-extrabold text-3xl font-bakbak dark:text-white">

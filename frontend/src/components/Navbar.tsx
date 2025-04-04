@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import React from 'react'
-import logo from '../../assets/logo.png'
 import Image from 'next/image'
 import { Avatar, Button, DarkThemeToggle, Dropdown } from 'flowbite-react'
 import { HiCog, HiCurrencyDollar, HiLogout, HiOutlineArrowRight, HiUser, HiViewGrid } from "react-icons/hi";

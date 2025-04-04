@@ -7,6 +7,8 @@ import { useTranslation } from '../../../hooks/useTranslation'
 import { useDispatch } from 'react-redux'
 import { HELActions } from '../../../store'
 import { useRouter } from 'next/router'
+import Image from 'next/image'
+import { HiUserCircle } from 'react-icons/hi'
 
 export default function LoginCard() {
     const [otpModal, setOtpModal] = useState(false)
@@ -60,7 +62,8 @@ export default function LoginCard() {
                     <Button onClick={() => setOtpModal(false)} fullSized color='primary'>{t('root.proceed')}</Button>
                 </Modal.Footer>
             </Modal>
-            <Card className="mx-auto my-7 md:max-w-fit" imgSrc={img_adminLogin.src} horizontal>
+            <Card className="mx-auto my-7 min-w-max" horizontal renderImage={() => <Image width={500} height={500} src={img_adminLogin.src} alt="MSTC Admin" />}>
+                <center><HiUserCircle size={80} className='align-center text-slate-600' /></center>
                 <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white w-full">
                     MSTC Admin Login
                 </h5>
@@ -79,7 +82,7 @@ export default function LoginCard() {
                     </div>
                     <Button type="submit" color='primary' isProcessing={loading} className='mt-2'>Submit</Button>
                 </form>
-            </Card>
+            </Card >
         </>
     )
 }
