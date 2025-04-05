@@ -779,12 +779,12 @@ namespace Leasing.Presentation.Controllers
         [HttpGet("export-locations")]
         public async Task<IActionResult> ExportLocations()
         {
-            var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var requester = await _mstcAdminService.GetMstcUserByIdAsync(requesterId);
-            if (!requester.Permissions.Contains("Location Master"))
-            {
-                return Forbid("You do not have permission to manage Location Master");
-            }
+            //var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            //var requester = await _mstcAdminService.GetMstcUserByIdAsync(requesterId);
+            //if (!requester.Permissions.Contains("Location Master"))
+            //{
+            //    return Forbid("You do not have permission to manage Location Master");
+            //}
 
             var (success, message, fileContent) = await _locationService.ExportLocationsToExcelAsync();
             if (!success)
@@ -798,12 +798,12 @@ namespace Leasing.Presentation.Controllers
         [HttpPost("import-locations")]
         public async Task<IActionResult> ImportLocations(IFormFile file)
         {
-            var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var requester = await _mstcAdminService.GetMstcUserByIdAsync(requesterId);
-            if (!requester.Permissions.Contains("Location Master"))
-            {
-                return Forbid("You do not have permission to manage Location Master");
-            }
+            //var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            //var requester = await _mstcAdminService.GetMstcUserByIdAsync(requesterId);
+            //if (!requester.Permissions.Contains("Location Master"))
+            //{
+            //    return Forbid("You do not have permission to manage Location Master");
+            //}
 
             if (file == null || file.Length == 0)
             {
@@ -827,12 +827,12 @@ namespace Leasing.Presentation.Controllers
         [HttpGet("billing-report/robo-list")]
         public async Task<IActionResult> GetBillingReportRoBoList()
         {
-            var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var requester = await _mstcAdminService.GetMstcUserByIdAsync(requesterId);
-            if (!requester.Permissions.Contains("Billing Report"))
-            {
-                return Forbid("You do not have permission to access Billing Report");
-            }
+            //var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            //var requester = await _mstcAdminService.GetMstcUserByIdAsync(requesterId);
+            //if (!requester.Permissions.Contains("Billing Report"))
+            //{
+            //    return Forbid("You do not have permission to access Billing Report");
+            //}
 
             var roBoList = await _billingReportService.GetRoBoListAsync();
             return Ok(new { RoBoList = roBoList });
@@ -841,12 +841,12 @@ namespace Leasing.Presentation.Controllers
         [HttpGet("billing-report")]
         public async Task<IActionResult> GetBillingReport([FromQuery] string roBo, [FromQuery] string month, [FromQuery] int year)
         {
-            var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var requester = await _mstcAdminService.GetMstcUserByIdAsync(requesterId);
-            if (!requester.Permissions.Contains("Billing Report"))
-            {
-                return Forbid("You do not have permission to access Billing Report");
-            }
+            //var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            //var requester = await _mstcAdminService.GetMstcUserByIdAsync(requesterId);
+            //if (!requester.Permissions.Contains("Billing Report"))
+            //{
+            //    return Forbid("You do not have permission to access Billing Report");
+            //}
 
             var (success, message, reports, totalBasicAmount, totalWithGst) = await _billingReportService.GetBillingReportsAsync(roBo, month, year);
             if (!success)
@@ -865,12 +865,12 @@ namespace Leasing.Presentation.Controllers
         [HttpGet("billing-report/export")]
         public async Task<IActionResult> ExportBillingReport([FromQuery] string roBo, [FromQuery] string month, [FromQuery] int year)
         {
-            var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            var requester = await _mstcAdminService.GetMstcUserByIdAsync(requesterId);
-            if (!requester.Permissions.Contains("Billing Report"))
-            {
-                return Forbid("You do not have permission to access Billing Report");
-            }
+            //var requesterId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            //var requester = await _mstcAdminService.GetMstcUserByIdAsync(requesterId);
+            //if (!requester.Permissions.Contains("Billing Report"))
+            //{
+            //    return Forbid("You do not have permission to access Billing Report");
+            //}
 
             var (success, message, fileContent) = await _billingReportService.ExportBillingReportsToExcelAsync(roBo, month, year);
             if (!success)
