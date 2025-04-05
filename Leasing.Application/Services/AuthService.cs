@@ -96,6 +96,7 @@ public class AuthService : IAuthService
 
         _cache.Remove(cacheKey);
         var user = await _userRepository.GetByPhoneAsync(phone);
+        
         bool isNewUser = user == null;
         string token = null;
         if (isNewUser)
