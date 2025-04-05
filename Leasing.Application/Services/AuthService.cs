@@ -489,7 +489,7 @@ public class AuthService : IAuthService
             Phone = phone,
             Name = name,
             Role = "MSTC",
-            RoBo = roBo,
+            //RoBo = roBo,
             Permissions = permissions ?? new List<string>(),
             IsVerified = true, // Admin registration assumes verified
             IsEmailVerified = true, // Skip email verification for admin registration
