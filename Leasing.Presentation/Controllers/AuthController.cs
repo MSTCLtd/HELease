@@ -1,5 +1,6 @@
 ﻿using Leasing.Application;
 using Leasing.Application.Interfaces;
+using Leasing.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
@@ -31,10 +32,19 @@ namespace Leasing.Presentation.Controllers
             var(success, isNewUser, role, token,email,name) = await _authService.VerifyOtpAsync(request.Phone, request.OtpCode);
             if (success)
             {
+                if (!role.Equals("user", StringComparison.CurrentCultureIgnoreCase))
+                {
+
+                    return Ok(new { Message = "Invalid user type", status = 500 }); ;
+                }
                 if (!isNewUser)
                 {
                     return Ok(new { Message = "User already exists", isNewUser = false, status = false, Token = token, email,name });
                 }
+                
+                    
+
+              
                 return Ok(new { Message = "OTP verified", IsNewUser = isNewUser, Role = role, status = true, email, name });
             }
             return BadRequest(new { Message = "Invalid or expired OTP", status = false });
