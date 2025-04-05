@@ -35,7 +35,7 @@ namespace Leasing.Presentation.Controllers
                 if (!role.Equals("user", StringComparison.CurrentCultureIgnoreCase))
                 {
 
-                    return Ok(new { Message = "Invalid user type", status = 500 }); ;
+                    return BadRequest(new { Message = "Invalid Credentials", status = 500 }); ;
                 }
                 if (!isNewUser)
                 {
