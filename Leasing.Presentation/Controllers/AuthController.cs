@@ -29,7 +29,7 @@ namespace Leasing.Presentation.Controllers
         [HttpPost("register/verify-otp")]
         public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
         {
-            var(success, isNewUser, role, token,email,name) = await _authService.VerifyOtpAsync(request.Phone, request.OtpCode);
+            var(success, isNewUser, role, token,email,name,reg_no) = await _authService.VerifyOtpAsync(request.Phone, request.OtpCode);
             if (success)
             {
                 if (!role.Equals("user", StringComparison.CurrentCultureIgnoreCase))
@@ -39,13 +39,13 @@ namespace Leasing.Presentation.Controllers
                 }
                 if (!isNewUser)
                 {
-                    return Ok(new { Message = "User already exists", isNewUser = false, status = false, Token = token, email,name });
+                    return Ok(new { Message = "User already exists", isNewUser = false, status = false, Token = token, email,name,  reg_no });
                 }
                 
                     
 
               
-                return Ok(new { Message = "OTP verified", IsNewUser = isNewUser, Role = role, status = true, email, name });
+                return Ok(new { Message = "OTP verified", IsNewUser = isNewUser, Role = role, status = true, email, name});
             }
             return BadRequest(new { Message = "Invalid or expired OTP", status = false });
         }
