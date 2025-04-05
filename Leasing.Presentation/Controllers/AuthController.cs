@@ -39,7 +39,7 @@ namespace Leasing.Presentation.Controllers
                 }
                 if (!isNewUser)
                 {
-                    return Ok(new { Message = "User already exists", isNewUser = false, status = false, Token = token, email,name,  reg_no });
+                    return Ok(new { Message = "User already exists", isNewUser = false, status = false, Token = token, email,name, RegistrationNumber =reg_no });
                 }
                 
                     
