@@ -9,7 +9,7 @@ namespace Leasing.Application.Interfaces
         Task<List<User>> GetAllUsersAsync();
         Task<List<User>> GetAllMstcUsersAsync(); // New method
         Task<User> GetMstcUserByIdAsync(int userId); // New method
-        Task<(bool Success, string Message, User User)> RegisterSupplierAsync(string username, string password, string email, string phone, string name, string businessType);
+      // Task<(bool Success, string Message, User User)> RegisterSupplierAsync(string username, string password, string email, string phone, string name, string businessType);
         Task<(bool Success, string Message, User User)> UpdateUserAsync(int userId, string name, string email, string phone, List<string> permissions, string roBo);
         Task<(bool Success, string Message)> DeleteUserAsync(int userId); // New method
         //Task<List<Equipment>> GetAllEquipmentAsync();

@@ -519,6 +519,178 @@ public class AuthService : IAuthService
     }
 
     private bool IsValidRole(string role) => role is "User" or "Brand" or "MSTC";
+    public async Task<(bool Success, string RegistrationNumber, string Token)> RegisterSupplierOrBrandAsync(
+             string phone,
+             string name,
+             string email,
+             string username,
+             string password,
+             string businessType,
+             string organizationPan,
+             string organizationName,
+             string supplierAddress,
+             string pinCode,
+             string district,
+             string state,
+             string contactPersonName,
+             List<string> equipmentCategories,
+             bool isMsme = false,
+             bool hasGstRegistration = false,
+             string gstNumber = null)
+    {
+        _logger.LogDebug("RegisterSupplierOrBrandAsync called with phone: {Phone}, name: {Name}, email: {Email}, businessType: {BusinessType}", phone, name, email, businessType);
+
+        if (!phone.StartsWith("+")) phone = "+91" + phone.TrimStart('0');
+        if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
+        {
+            _logger.LogWarning("Invalid email {Email} for phone {Phone}", email, phone);
+            return (false, null, null);
+        }
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            _logger.LogWarning("Username and password are required for phone {Phone}", phone);
+            return (false, null, null);
+        }
+        if (string.IsNullOrWhiteSpace(organizationPan) || string.IsNullOrWhiteSpace(organizationName))
+        {
+            _logger.LogWarning("Organization PAN and Name are required for phone {Phone}", phone);
+            return (false, null, null);
+        }
+        if (string.IsNullOrWhiteSpace(businessType) || !new[] { "Brand", "Manufacturer", "Dealer" }.Contains(businessType))
+        {
+            _logger.LogWarning("Invalid businessType {BusinessType} for phone {Phone}. Must be 'Brand', 'Manufacturer', or 'Dealer'", businessType, phone);
+            return (false, "Invalid businessType", null);
+        }
+
+        // Validate PAN
+        if (!IsValidPan(organizationPan))
+        {
+            _logger.LogWarning("Invalid Organization PAN {Pan} for phone {Phone}", organizationPan, phone);
+            return (false, "Invalid Organization PAN", null);
+        }
+
+        // Validate GST if provided
+        if (hasGstRegistration && !string.IsNullOrWhiteSpace(gstNumber) && !IsValidGst(gstNumber))
+        {
+            _logger.LogWarning("Invalid GST Number {Gst} for phone {Phone}", gstNumber, phone);
+            return (false, "Invalid GST Number", null);
+        }
+
+        var user = await _userRepository.GetByPhoneAsync(phone);
+        if (user == null || !user.IsVerified || !user.IsEmailVerified || !string.IsNullOrEmpty(user.RegistrationNumber))
+        {
+            _logger.LogWarning("Registration failed for {Phone}: not verified, email not verified, or already registered", phone);
+            return (false, null, null);
+        }
+
+        var existingUserWithEmail = await _userRepository.GetByEmailAsync(email);
+        if (existingUserWithEmail != null && existingUserWithEmail.Phone != phone)
+        {
+            _logger.LogWarning("Email {Email} is already registered to another user", email);
+            return (false, null, null);
+        }
+
+        var existingUserWithUsername = await _userRepository.GetByUsernameAsync(username);
+        if (existingUserWithUsername != null)
+        {
+            _logger.LogWarning("Username {Username} is already registered", username);
+            return (false, null, null);
+        }
+
+        var brandUser = new BrandUser
+        {
+            Username = username,
+            Password = BCrypt.Net.BCrypt.HashPassword(password),
+            Email = email,
+            Phone = phone,
+            Name = name,
+            Role = "Brand",
+            BusinessType = businessType,
+            OrganizationPan = organizationPan,
+            OrganizationName = organizationName,
+            SupplierAddress = supplierAddress,
+            PinCode = pinCode,
+            District = district,
+            State = state,
+            ContactPersonName = contactPersonName,
+            EquipmentCategories = equipmentCategories ?? new List<string>(),
+            IsMsme = isMsme,
+            HasGstRegistration = hasGstRegistration,
+            GstNumber = hasGstRegistration ? gstNumber : null,
+            IsVerified = true,
+            IsEmailVerified = true,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        try
+        {
+            await _userRepository.AddAsync(brandUser);
+            await _userRepository.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            _logger.LogError(ex, "Registration failed for phone {Phone} or email {Email} due to duplicate key", phone, email);
+            return (false, null, null);
+        }
+
+        string prefix = "BRND";
+        brandUser.RegistrationNumber = $"{prefix}{brandUser.Id:D6}";
+        await _userRepository.UpdateAsync(brandUser);
+        await _userRepository.SaveChangesAsync();
+
+        var token = GenerateJwtToken(brandUser);
+        _logger.LogInformation("Supplier/Brand {Phone} completed registration. BusinessType: {BusinessType}, RegistrationNumber: {RegNum}", phone, businessType, brandUser.RegistrationNumber);
+        return (true, brandUser.RegistrationNumber, token);
+    }
+
+    public async Task<bool> UpdateBrandProfileAsync(int userId, string name, string email, string businessType = null, string panNumber = null, string gstNumber = null)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+        {
+            _logger.LogWarning("User not found for userId {UserId}", userId);
+            return false;
+        }
+
+        if (!string.IsNullOrWhiteSpace(name)) user.Name = name;
+        if (!string.IsNullOrWhiteSpace(email) && IsValidEmail(email))
+        {
+            var existingUserWithEmail = await _userRepository.GetByEmailAsync(email);
+            if (existingUserWithEmail != null && existingUserWithEmail.Id != userId)
+            {
+                _logger.LogWarning("Email {Email} already exists", email);
+                return false;
+            }
+            user.Email = email;
+            user.IsEmailVerified = false; // Require re-verification
+        }
+
+        if (user is BrandUser brandUser)
+        {
+            if (!string.IsNullOrWhiteSpace(businessType) && new[] { "Brand", "Manufacturer", "Dealer","Supplier" }.Contains(businessType))
+                brandUser.BusinessType = businessType;
+            if (!string.IsNullOrWhiteSpace(panNumber) && IsValidPan(panNumber))
+                brandUser.OrganizationPan = panNumber;
+            if (!string.IsNullOrWhiteSpace(gstNumber) && IsValidGst(gstNumber))
+                brandUser.GstNumber = gstNumber;
+        }
+
+        user.UpdatedAt = DateTime.UtcNow;
+        await _userRepository.UpdateAsync(user);
+        return true;
+    }
+
+    private bool IsValidPan(string pan)
+    {
+        return !string.IsNullOrWhiteSpace(pan) && pan.Length == 10 && pan.All(char.IsLetterOrDigit);
+    }
+
+    private bool IsValidGst(string gst)
+    {
+        return !string.IsNullOrWhiteSpace(gst) && gst.Length == 15 && gst.All(char.IsLetterOrDigit);
+    }
+
 
 
 

@@ -52,74 +52,74 @@ namespace Leasing.Application.Services
             return user;
         }
 
-        public async Task<(bool Success, string Message, User User)> RegisterSupplierAsync(string username, string password, string email, string phone, string name, string businessType)
-        {
-            _logger.LogDebug("RegisterSupplierAsync called with username: {Username}", username);
+        //public async Task<(bool Success, string Message, User User)> RegisterSupplierAsync(string username, string password, string email, string phone, string name, string businessType)
+        //{
+        //    _logger.LogDebug("RegisterSupplierAsync called with username: {Username}", username);
 
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(phone))
-            {
-                _logger.LogWarning("Required fields missing for Supplier registration");
-                return (false, "Username, password, email, and phone are required", null);
-            }
+        //    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(phone))
+        //    {
+        //        _logger.LogWarning("Required fields missing for Supplier registration");
+        //        return (false, "Username, password, email, and phone are required", null);
+        //    }
 
-            if (!phone.StartsWith("+")) phone = "+91" + phone.TrimStart('0');
+        //    if (!phone.StartsWith("+")) phone = "+91" + phone.TrimStart('0');
 
-            var existingUser = await _userRepository.GetByUsernameAsync(username);
-            if (existingUser != null)
-            {
-                _logger.LogWarning("Username {Username} already exists", username);
-                return (false, "Username already exists", null);
-            }
+        //    var existingUser = await _userRepository.GetByUsernameAsync(username);
+        //    if (existingUser != null)
+        //    {
+        //        _logger.LogWarning("Username {Username} already exists", username);
+        //        return (false, "Username already exists", null);
+        //    }
 
-            var existingUserWithEmail = await _userRepository.GetByEmailAsync(email);
-            if (existingUserWithEmail != null)
-            {
-                _logger.LogWarning("Email {Email} already exists", email);
-                return (false, "Email already exists", null);
-            }
+        //    var existingUserWithEmail = await _userRepository.GetByEmailAsync(email);
+        //    if (existingUserWithEmail != null)
+        //    {
+        //        _logger.LogWarning("Email {Email} already exists", email);
+        //        return (false, "Email already exists", null);
+        //    }
 
-            var existingUserWithPhone = await _userRepository.GetByPhoneAsync(phone);
-            if (existingUserWithPhone != null)
-            {
-                _logger.LogWarning("Phone {Phone} already exists", phone);
-                return (false, "Phone number already exists", null);
-            }
+        //    var existingUserWithPhone = await _userRepository.GetByPhoneAsync(phone);
+        //    if (existingUserWithPhone != null)
+        //    {
+        //        _logger.LogWarning("Phone {Phone} already exists", phone);
+        //        return (false, "Phone number already exists", null);
+        //    }
 
-            var user = new User
-            {
-                Username = username,
-                Password = BCrypt.Net.BCrypt.HashPassword(password),
-                Email = email,
-                Phone = phone,
-                Name = name,
-                Role = "Brand",
-                BusinessType = businessType,
-                IsVerified = true,
-                IsEmailVerified = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                RegistrationNumber = "TEMP"
-            };
+        //    var user = new User
+        //    {
+        //        Username = username,
+        //        Password = BCrypt.Net.BCrypt.HashPassword(password),
+        //        Email = email,
+        //        Phone = phone,
+        //        Name = name,
+        //        Role = "Brand",
+        //        BusinessType = businessType,
+        //        IsVerified = true,
+        //        IsEmailVerified = true,
+        //        CreatedAt = DateTime.UtcNow,
+        //        UpdatedAt = DateTime.UtcNow,
+        //        RegistrationNumber = "TEMP"
+        //    };
 
-            try
-            {
-                await _userRepository.AddAsync(user);
-                await _userRepository.SaveChangesAsync();
+        //    try
+        //    {
+        //        await _userRepository.AddAsync(user);
+        //        await _userRepository.SaveChangesAsync();
 
-                user.RegistrationNumber = $"BRND{user.Id:D6}";
-                user.UpdatedAt = DateTime.UtcNow;
-                await _userRepository.UpdateAsync(user);
-                await _userRepository.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                _logger.LogError(ex, "Failed to register Supplier due to database error");
-                return (false, "Failed to register Supplier", null);
-            }
+        //        user.RegistrationNumber = $"BRND{user.Id:D6}";
+        //        user.UpdatedAt = DateTime.UtcNow;
+        //        await _userRepository.UpdateAsync(user);
+        //        await _userRepository.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateException ex)
+        //    {
+        //        _logger.LogError(ex, "Failed to register Supplier due to database error");
+        //        return (false, "Failed to register Supplier", null);
+        //    }
 
-            _logger.LogInformation("Supplier {Username} registered successfully with RegistrationNumber {RegNum}", username, user.RegistrationNumber);
-            return (true, "Supplier registered successfully", user);
-        }
+        //    _logger.LogInformation("Supplier {Username} registered successfully with RegistrationNumber {RegNum}", username, user.RegistrationNumber);
+        //    return (true, "Supplier registered successfully", user);
+        //}
 
         public async Task<(bool Success, string Message, User User)> UpdateUserAsync(int userId, string name, string email, string phone, List<string> permissions, string roBo)
         {
