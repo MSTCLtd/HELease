@@ -1,7 +1,7 @@
-﻿using Leasing.Application.Interfaces;
+﻿using Leasing.Application.DTOs;
+using Leasing.Application.Interfaces;
 using Leasing.Domain.Entities;
 using Leasing.Domain.Interfaces;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -28,17 +28,19 @@ namespace Leasing.Application.Services
             _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
             _equipmentTypeRepository = equipmentTypeRepository ?? throw new ArgumentNullException(nameof(equipmentTypeRepository));
             _imageRepository = imageRepository ?? throw new ArgumentNullException(nameof(imageRepository));
-            _imageStoragePath = configuration.GetSection("ImageStorage:Path").Value;
+            _imageStoragePath = configuration.GetSection("ImageStorage:Path").Value ?? throw new ArgumentNullException(nameof(_imageStoragePath));
         }
 
-        public async Task<List<Product>> GetAllProductsAsync()
+        public async Task<List<ProductDto>> GetAllProductsAsync()
         {
-            return await _productRepository.GetAllProductsAsync();
+            var products = await _productRepository.GetAllProductsAsync();
+            return MapProductsToDtos(products);
         }
 
-        public async Task<Product> GetProductByIdAsync(int id)
+        public async Task<ProductDto> GetProductByIdAsync(int id)
         {
-            return await _productRepository.GetProductByIdAsync(id);
+            var product = await _productRepository.GetProductByIdAsync(id);
+            return product != null ? MapProductToDto(product) : null;
         }
 
         public async Task<List<string>> GetEquipmentTypesAsync()
@@ -59,7 +61,7 @@ namespace Leasing.Application.Services
             return products.Select(p => p.Model).Distinct().ToList();
         }
 
-        public async Task<(bool Success, string Message, Product Product)> AddProductAsync(
+        public async Task<(bool Success, string Message, ProductDto Product)> AddProductAsync(
             int equipmentTypeId, int? equipmentCategoryId, string brand, string model,
             string youTubeLink, string description, string specifications, List<IFormFile> images)
         {
@@ -108,7 +110,6 @@ namespace Leasing.Application.Services
 
                 if (images != null && images.Any())
                 {
-                    // Ensure the storage directory exists
                     if (!Directory.Exists(_imageStoragePath))
                     {
                         Directory.CreateDirectory(_imageStoragePath);
@@ -116,18 +117,14 @@ namespace Leasing.Application.Services
 
                     foreach (var image in images)
                     {
-                        // Generate a unique file name
                         var fileName = $"{Guid.NewGuid()}_{image.FileName}";
                         var filePath = Path.Combine(_imageStoragePath, fileName);
 
-                        // Save the file to the specified directory (D://images)
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await image.CopyToAsync(stream);
                         }
 
-                        // Save the relative path for the frontend to access
-                        // Since D://images is outside wwwroot, we'll map it to a virtual path
                         var relativePath = $"/images/{fileName}";
                         var imageEntity = new Image
                         {
@@ -141,7 +138,7 @@ namespace Leasing.Application.Services
                     }
                 }
 
-                return (true, "Product added successfully", product);
+                return (true, "Product added successfully", MapProductToDto(product));
             }
             catch (Exception ex)
             {
@@ -149,7 +146,7 @@ namespace Leasing.Application.Services
             }
         }
 
-        public async Task<(bool Success, string Message, Product Product)> UpdateProductAsync(
+        public async Task<(bool Success, string Message, ProductDto Product)> UpdateProductAsync(
             int id, int equipmentTypeId, int? equipmentCategoryId, string brand, string model,
             string youTubeLink, string description, string specifications, List<IFormFile> images, List<int> imagesToDelete)
         {
@@ -196,7 +193,6 @@ namespace Leasing.Application.Services
                 product.Specifications = specifications;
                 product.UpdatedAt = DateTime.UtcNow;
 
-                // Delete specified images
                 if (imagesToDelete != null && imagesToDelete.Any())
                 {
                     foreach (var imageId in imagesToDelete)
@@ -204,25 +200,20 @@ namespace Leasing.Application.Services
                         var image = await _imageRepository.GetImageByIdAsync(imageId);
                         if (image != null)
                         {
-                            // Delete the file from the D://images directory
                             var fileName = Path.GetFileName(image.FilePath);
                             var fullPath = Path.Combine(_imageStoragePath, fileName);
                             if (File.Exists(fullPath))
                             {
                                 File.Delete(fullPath);
                             }
-
-                            // Delete the image record from the database
                             await _imageRepository.DeleteImageAsync(imageId);
                             product.Images.RemoveAll(i => i.Id == imageId);
                         }
                     }
                 }
 
-                // Add new images
                 if (images != null && images.Any())
                 {
-                    // Ensure the storage directory exists
                     if (!Directory.Exists(_imageStoragePath))
                     {
                         Directory.CreateDirectory(_imageStoragePath);
@@ -230,17 +221,14 @@ namespace Leasing.Application.Services
 
                     foreach (var image in images)
                     {
-                        // Generate a unique file name
                         var fileName = $"{Guid.NewGuid()}_{image.FileName}";
                         var filePath = Path.Combine(_imageStoragePath, fileName);
 
-                        // Save the file to the specified directory (D://images)
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await image.CopyToAsync(stream);
                         }
 
-                        // Save the relative path for the frontend to access
                         var relativePath = $"/images/{fileName}";
                         var imageEntity = new Image
                         {
@@ -255,7 +243,7 @@ namespace Leasing.Application.Services
                 }
 
                 await _productRepository.UpdateProductAsync(product);
-                return (true, "Product updated successfully", product);
+                return (true, "Product updated successfully", MapProductToDto(product));
             }
             catch (Exception ex)
             {
@@ -277,14 +265,12 @@ namespace Leasing.Application.Services
                 {
                     foreach (var image in product.Images)
                     {
-                        // Delete the file from the D://images directory
                         var fileName = Path.GetFileName(image.FilePath);
                         var fullPath = Path.Combine(_imageStoragePath, fileName);
                         if (File.Exists(fullPath))
                         {
                             File.Delete(fullPath);
                         }
-
                         await _imageRepository.DeleteImageAsync(image.Id);
                     }
                     await _productRepository.DeleteProductAsync(product.Id);
@@ -310,14 +296,12 @@ namespace Leasing.Application.Services
 
                 foreach (var image in product.Images)
                 {
-                    // Delete the file from the D://images directory
                     var fileName = Path.GetFileName(image.FilePath);
                     var fullPath = Path.Combine(_imageStoragePath, fileName);
                     if (File.Exists(fullPath))
                     {
                         File.Delete(fullPath);
                     }
-
                     await _imageRepository.DeleteImageAsync(image.Id);
                 }
 
@@ -329,5 +313,52 @@ namespace Leasing.Application.Services
                 return (false, $"Error deleting model: {ex.Message}");
             }
         }
+
+        private List<ProductDto> MapProductsToDtos(List<Product> products)
+        {
+            return products.Select(MapProductToDto).ToList();
+        }
+
+        private ProductDto MapProductToDto(Product product)
+        {
+            return new ProductDto
+            {
+                Id = product.Id,
+                EquipmentTypeId = product.EquipmentTypeId,
+                EquipmentTypeName = product.EquipmentType?.Name,
+                EquipmentTypeCode = product.EquipmentType?.Code,
+                EquipmentCategoryId = product.EquipmentCategory?.Id,
+                EquipmentCategoryLevel1 = product.EquipmentCategory?.Level1,
+                EquipmentCategoryLevel2 = product.EquipmentCategory?.Level2,
+                EquipmentCategoryLevel3 = product.EquipmentCategory?.Level3,
+                EquipmentCategoryLevel4 = product.EquipmentCategory?.Level4,
+                EquipmentCategoryLevel5 = product.EquipmentCategory?.Level5,
+                Brand = product.Brand,
+                Model = product.Model,
+                YouTubeLink = product.YouTubeLink,
+                Description = product.Description,
+                Specifications = product.Specifications,
+                ImagePaths = product.Images?.Select(i => i.FilePath).ToList() ?? new List<string>()
+            };
+        }
+
+        private Product MapDtoToProduct(ProductDto productDto)
+        {
+            return new Product
+            {
+                Id = productDto.Id,
+                EquipmentTypeId = productDto.EquipmentTypeId,
+                EquipmentCategoryId = productDto.EquipmentCategoryId,
+                Brand = productDto.Brand,
+                Model = productDto.Model,
+                YouTubeLink = productDto.YouTubeLink,
+                Description = productDto.Description,
+                Specifications = productDto.Specifications,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+        }
     }
+
+    
 }

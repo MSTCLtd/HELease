@@ -27,10 +27,103 @@ namespace Leasing.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure TPH for User hierarchy
-            modelBuilder.Entity<User>()
-                .HasDiscriminator<string>("Role")
-                .HasValue<MstcUser>("MSTC")
-                .HasValue<BrandUser>("Brand");
+            //modelBuilder.Entity<User>()
+            //    .HasDiscriminator<string>("Role")
+            //    .HasValue<MstcUser>("MSTC")
+            //    .HasValue<BrandUser>("Brand");
+
+            modelBuilder.Entity<User>().ToTable("Users");
+            modelBuilder.Entity<MstcUser>().ToTable("MstcUsers").HasBaseType<User>();
+            modelBuilder.Entity<BrandUser>().ToTable("BrandUsers").HasBaseType<User>();
+
+            modelBuilder.Entity<Product>()
+                .ToTable("Products");
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Brand)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Model)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.YouTubeLink)
+                .HasMaxLength(255);
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Description)
+                .HasMaxLength(1000);
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Specifications)
+                .HasMaxLength(1000);
+
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.EquipmentType)
+                .WithMany()
+                .HasForeignKey(p => p.EquipmentTypeId);
+
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.EquipmentCategory)
+                .WithMany()
+                .HasForeignKey(p => p.EquipmentCategoryId);
+
+            modelBuilder.Entity<Image>()
+                .ToTable("Images")
+                .HasKey(i => i.Id);
+
+            modelBuilder.Entity<Image>()
+                .Property(i => i.FilePath)
+                .HasMaxLength(255);
+
+            modelBuilder.Entity<Image>()
+                .HasOne(i => i.Product)
+                .WithMany(p => p.Images)
+                .HasForeignKey(i => i.ProductId);
+
+            modelBuilder.Entity<EquipmentType>()
+                .ToTable("EquipmentTypes");
+
+            modelBuilder.Entity<EquipmentType>()
+                .Property(et => et.SystemId)
+                .HasMaxLength(50);
+
+            modelBuilder.Entity<EquipmentType>()
+                .Property(et => et.Name)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<EquipmentType>()
+                .Property(et => et.Code)
+                .HasMaxLength(10);
+
+            modelBuilder.Entity<EquipmentCategory>()
+                .ToTable("EquipmentCategories");
+
+            modelBuilder.Entity<EquipmentCategory>()
+                .Property(ec => ec.Level1)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<EquipmentCategory>()
+                .Property(ec => ec.Level2)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<EquipmentCategory>()
+                .Property(ec => ec.Level3)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<EquipmentCategory>()
+                .Property(ec => ec.Level4)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<EquipmentCategory>()
+                .Property(ec => ec.Level5)
+                .HasMaxLength(100);
+
+            modelBuilder.Entity<EquipmentCategory>()
+                .HasOne(ec => ec.EquipmentType)
+                .WithMany(et => et.Categories)
+                .HasForeignKey(ec => ec.EquipmentTypeId);
         }
             
         }

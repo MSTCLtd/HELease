@@ -14,13 +14,14 @@ namespace Leasing.Infrastructure.Repositories
 
         public ProductRepository(AppDbContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public async Task<List<Product>> GetAllProductsAsync()
         {
             return await _context.Products
                 .Include(p => p.EquipmentType)
+                .ThenInclude(et => et.Categories) // Ensure categories are loaded if needed
                 .Include(p => p.EquipmentCategory)
                 .Include(p => p.Images)
                 .ToListAsync();
@@ -30,6 +31,7 @@ namespace Leasing.Infrastructure.Repositories
         {
             return await _context.Products
                 .Include(p => p.EquipmentType)
+                .ThenInclude(et => et.Categories)
                 .Include(p => p.EquipmentCategory)
                 .Include(p => p.Images)
                 .FirstOrDefaultAsync(p => p.Id == id);
@@ -39,6 +41,7 @@ namespace Leasing.Infrastructure.Repositories
         {
             return await _context.Products
                 .Include(p => p.EquipmentType)
+                .ThenInclude(et => et.Categories)
                 .Include(p => p.EquipmentCategory)
                 .Include(p => p.Images)
                 .Where(p => p.EquipmentTypeId == equipmentTypeId)
@@ -49,6 +52,7 @@ namespace Leasing.Infrastructure.Repositories
         {
             return await _context.Products
                 .Include(p => p.EquipmentType)
+                .ThenInclude(et => et.Categories)
                 .Include(p => p.EquipmentCategory)
                 .Include(p => p.Images)
                 .Where(p => p.EquipmentTypeId == equipmentTypeId && p.Brand == brand)
@@ -59,6 +63,7 @@ namespace Leasing.Infrastructure.Repositories
         {
             return await _context.Products
                 .Include(p => p.EquipmentType)
+                .ThenInclude(et => et.Categories)
                 .Include(p => p.EquipmentCategory)
                 .Include(p => p.Images)
                 .FirstOrDefaultAsync(p => p.EquipmentTypeId == equipmentTypeId && p.Brand == brand && p.Model == model);
