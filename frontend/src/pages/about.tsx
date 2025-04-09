@@ -36,7 +36,7 @@ export default function about() {
             <div className="max-w-screen-xl px-4 py-8 mx-auto lg:px-6 sm:py-16 lg:py-24">
                 <div className="text-center">
                     <h2 className="text-3xl font-extrabold leading-tight tracking-tight text-gray-900 sm:text-4xl dark:text-white">
-                        Available <span className='underlined'>Solutions</span>
+                        <span className='underlined'>Solutions</span>
                     </h2>
                 </div>
 

@@ -167,7 +167,7 @@ export default function EquipmentID() {
                 <div className='flex gap-2'>
                     <h3 className='dark:text-slate-400 font-bold text-lg grow'>Search filters (Categories)</h3>
                     <Button className='w-fit' color='primary' onClick={exportCategories} isProcessing={exporting}>Export Categories</Button>
-                    <Button className='w-fit' color='warning' onClick={importCategories} isProcessing={importing}>Import Categories</Button>
+                    <Button className='w-fit' color='secondary' onClick={importCategories} isProcessing={importing}>Import Categories</Button>
                 </div>
                 <Table striped>
                     <TableHead>
@@ -214,7 +214,7 @@ export default function EquipmentID() {
                             </TableRow>}
                     </TableBody>
                 </Table>
-                <Button className='w-fit self-center' onClick={() => setShowAddRow(!showAddRow)}>{showAddRow ? 'Cancel' : 'Add Row'}</Button>
+                <Button color='secondary' className='w-fit self-center' onClick={() => setShowAddRow(!showAddRow)}>{showAddRow ? 'Cancel' : 'Add Row'}</Button>
             </Card>
             <br />
             <Button color='primary' onClick={updateEquipment} isProcessing={saving} className='w-fit' disabled={_.isEqualWith(equipment, updatedEquipment, (objValue, othValue) => {

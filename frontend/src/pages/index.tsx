@@ -56,7 +56,7 @@ export default function index() {
 				</div> */}
 			</div>
 			<br />
-			<h1 className='text-center text-3xl dark:text-white font-bold'>Available <span className='underlined'>Equipment Types</span></h1>
+			<h1 className='text-center text-3xl dark:text-white font-bold'><span className='underlined'>Equipment Types</span></h1>
 			<br />
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 px-4">
 				<CategoryCard title='Agriculture' image={itemAgriculture} link='#' />

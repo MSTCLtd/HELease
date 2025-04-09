@@ -196,8 +196,8 @@ export default function Navbar() {
                         </div> */}
 
                         {user ? <BuyerDropdown /> : <>
-                            <Button color='blue' size='sm' href='/login' as={Link} className='hidden sm:block'>Login / Register <HiOutlineArrowRight className="ml-2 h-5 w-5" /></Button>
-                            <Button color='blue' size='sm' href='/login' as={Link} className='block sm:hidden'><HiUser className="h-5 w-5" /></Button>
+                            <Button color='primary' size='sm' href='/login' as={Link} className='hidden sm:block'>Login / Register <HiOutlineArrowRight className="ml-2 h-5 w-5" /></Button>
+                            <Button color='primary' size='sm' href='/login' as={Link} className='block sm:hidden'><HiUser className="h-5 w-5" /></Button>
                         </>}
                     </div>
                 </div>

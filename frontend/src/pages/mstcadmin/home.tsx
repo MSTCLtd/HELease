@@ -13,7 +13,7 @@ export default function home() {
                 <Link href='/mstcadmin/users'>
                     <Card className='shadow-none transition-shadow hover:shadow-lg'>
                         <div className="flex flex-col items-center justify-center h-32">
-                            <dt className="mb-2 text-3xl font-extrabold">{users.toLocaleString()}</dt>
+                            <dt className="mb-2 text-3xl font-extrabold dark:text-slate-300">{users.toLocaleString()}</dt>
                             <dd className="text-gray-500 dark:text-gray-400">Users</dd>
                         </div>
                     </Card>
@@ -21,7 +21,7 @@ export default function home() {
                 <Link href='/mstcadmin/equipment'>
                     <Card className='shadow-none transition-shadow hover:shadow-lg'>
                         <div className="flex flex-col items-center justify-center h-32">
-                            <dt className="mb-2 text-3xl font-extrabold">{equip.toLocaleString()}</dt>
+                            <dt className="mb-2 text-3xl font-extrabold dark:text-slate-300">{equip.toLocaleString()}</dt>
                             <dd className="text-gray-500 dark:text-gray-400">Equipments</dd>
                         </div>
                     </Card>
@@ -29,7 +29,7 @@ export default function home() {
                 <Link href='/mstcadmin/equipment'>
                     <Card className='shadow-none transition-shadow hover:shadow-lg'>
                         <div className="flex flex-col items-center justify-center h-32">
-                            <dt className="mb-2 text-3xl font-extrabold">{products.toLocaleString()}</dt>
+                            <dt className="mb-2 text-3xl font-extrabold dark:text-slate-300">{products.toLocaleString()}</dt>
                             <dd className="text-gray-500 dark:text-gray-400">Products</dd>
                         </div>
                     </Card>
@@ -37,7 +37,7 @@ export default function home() {
                 <Link href='/mstcadmin/equipment'>
                     <Card className='shadow-none transition-shadow hover:shadow-lg'>
                         <div className="flex flex-col items-center justify-center h-32">
-                            <dt className="mb-2 text-3xl font-extrabold">{products.toLocaleString()}</dt>
+                            <dt className="mb-2 text-3xl font-extrabold dark:text-slate-300">{products.toLocaleString()}</dt>
                             <dd className="text-gray-500 dark:text-gray-400">Locations</dd>
                         </div>
                     </Card>

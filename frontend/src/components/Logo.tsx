@@ -17,7 +17,7 @@ export default function Logo() {
                         <span className="font-extrabold text-3xl font-bakbak dark:text-white">
                             {t('home.name')}
                         </span>
-                        <p className='text-sm bg-gradient-to-r from-red-500 dark:from-red-400 to-teal-400 dark:to-teal-200 bg-clip-text text-transparent'>Empowering Growth</p>
+                        <p className='text-sm'><span style={{ color: '#0193fd' }}>Empowering</span> <span style={{ color: '#fe6901' }}>Growth</span></p>
                     </div>
                 </div>
             </Link>

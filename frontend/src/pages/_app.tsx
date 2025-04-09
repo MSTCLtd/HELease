@@ -50,7 +50,8 @@ function Loader() {
 const customTheme: CustomFlowbiteTheme = {
 	button: {
 		color: {
-			primary: 'group relative flex items-stretch justify-center p-0.5 text-center font-medium transition-[color,background-color,border-color,text-decoration-color,fill,stroke,box-shadow] focus:z-10 focus:outline-none border border-transparent bg-blue-700 text-white focus:ring-4 focus:ring-blue-300 enabled:hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 rounded-lg w-full'
+			primary: 'bg-gradient-to-r from-[#007fff] to-[#00bfff] text-white',
+			secondary: 'bg-gradient-to-l from-[#ffcc00] to-[#ff4500]',
 		}
 	}
 }

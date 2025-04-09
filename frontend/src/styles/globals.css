@@ -4,6 +4,10 @@
 @plugin "flowbite/plugin";
 @source "../node_modules/flowbite";
 
+@theme {
+  --primary: #5a84c0;
+  --secondary: #f9ad23;
+}
 
 :root {
   --background: #ffffff;
@@ -34,8 +38,8 @@ body {
   left: 0;
   height: 7px;
   width: 100% !important;
-  border: solid 8px rgb(255, 123, 0);
-  border-color: rgb(255, 123, 0) transparent transparent transparent;
+  border: solid 8px rgb(0, 195, 255);
+  border-color: rgb(0, 195, 255) transparent transparent transparent;
   border-radius: 50%;
 }
 

@@ -48,7 +48,7 @@ export default function location() {
             <Card className='py-0 shadow-none'>
                 <div className='p-4 grid grid-cols-1 md:grid-cols-3'>
                     <div className='m-auto h-32 align-middle place-content-center'>
-                        <Button isProcessing={downloading} onClick={downloadFile} color='primary' pill>Download Current Location Master <HiDownload className='ml-2 w-5 h-5' /></Button>
+                        <Button isProcessing={downloading} onClick={downloadFile} color='secondary' pill>Download Current Location Master <HiDownload className='ml-2 w-5 h-5' /></Button>
                     </div>
                     <div className="border-l border-gray-300 h-full mx-auto"></div>
                     <div>

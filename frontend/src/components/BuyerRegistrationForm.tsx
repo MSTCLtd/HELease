@@ -54,10 +54,17 @@ export default function BuyerRegistrationForm() {
             if (response.data.isNewUser)
                 setDetailsModal(true)
             else {
-                dispatch(HELActions.setUser({ token: response.data.token, name: response.data.name, email: response.data.email }))
+                dispatch(HELActions.setUser({
+                    token: response.data.token,
+                    name: response.data.name,
+                    email: response.data.email,
+                    registrationNumber: response.data.registrationNumber
+                }))
                 router.push("/")
             }
             setOpenOTPModal(false)
+        }).catch(err => {
+            alert(err.response.data.message)
         })
     }
 
@@ -94,8 +101,12 @@ export default function BuyerRegistrationForm() {
             role: target.userRole.value
         }).then(response => {
             setOpenEmailOTPModal(false)
-            console.log(response.data);
-            dispatch(HELActions.setUser({ token: "" }))
+            dispatch(HELActions.setUser({
+                token: response.data.token,
+                name: response.data.name,
+                email: response.data.email,
+                registrationNumber: response.data.registrationNumber
+            }))
             router.push("/")
         })
     }
