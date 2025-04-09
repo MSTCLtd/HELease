@@ -137,7 +137,7 @@ namespace Leasing.Application.Services
                         product.Images.Add(imageEntity);
                     }
                 }
-
+              //  await _productRepository.IndexProductAsync(product);
                 return (true, "Product added successfully", MapProductToDto(product));
             }
             catch (Exception ex)
@@ -243,6 +243,8 @@ namespace Leasing.Application.Services
                 }
 
                 await _productRepository.UpdateProductAsync(product);
+                // Update the product in Elasticsearch
+              //  await _productRepository.UpdateIndexAsync(product);
                 return (true, "Product updated successfully", MapProductToDto(product));
             }
             catch (Exception ex)
@@ -274,6 +276,8 @@ namespace Leasing.Application.Services
                         await _imageRepository.DeleteImageAsync(image.Id);
                     }
                     await _productRepository.DeleteProductAsync(product.Id);
+                    // Delete from Elasticsearch
+                   // await _productRepository.DeleteFromIndexAsync(product.Id);
                 }
 
                 return (true, "Brand and all its models deleted successfully");
@@ -306,6 +310,7 @@ namespace Leasing.Application.Services
                 }
 
                 await _productRepository.DeleteProductAsync(product.Id);
+                //await _productRepository.DeleteFromIndexAsync(product.Id);
                 return (true, "Model deleted successfully");
             }
             catch (Exception ex)
