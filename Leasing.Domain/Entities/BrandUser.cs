@@ -4,15 +4,17 @@ namespace Leasing.Domain.Entities
 {
     public class BrandUser : User
     {
-        public bool IsMsme { get; set; }
-        public string GstNumber { get; set; }
-        public string OrganizationName { get; set; }
-        public string Address { get; set; }
-        public string PinCode { get; set; }
-        public string District { get; set; }
-        public string State { get; set; }
-        public string BusinessType { get; set; }
-        public List<string> EquipmentCategories { get; set; }
-        public string PanNumber { get; set; }
+        public string BusinessType { get; set; } // e.g., "Brand", "Manufacturer", "Dealer"
+        public string OrganizationPan { get; set; } // From the form
+        public string OrganizationName { get; set; } // From the form
+        public string SupplierAddress { get; set; } // From the form
+        public string PinCode { get; set; } // From the form
+        public string District { get; set; } // From the form
+        public string State { get; set; } // From the form
+        public string ContactPersonName { get; set; } // From the form
+        public List<string> EquipmentCategories { get; set; } // e.g., "Agricultural Equipment", "Material Handling"
+        public bool IsMsme { get; set; } // From "Are you an MSME?" checkbox
+        public bool HasGstRegistration { get; set; } // From "Do you have GST Registration?" checkbox
+        public string? GstNumber { get; set; } // Optional GST number if provided
     }
 }

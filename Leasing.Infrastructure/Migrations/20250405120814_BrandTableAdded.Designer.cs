@@ -4,6 +4,7 @@ using Leasing.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Leasing.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250405120814_BrandTableAdded")]
+    partial class BrandTableAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,24 +94,19 @@ namespace Leasing.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Level1")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Level2")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Level3")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Level4")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Level5")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -117,7 +115,7 @@ namespace Leasing.Infrastructure.Migrations
 
                     b.HasIndex("EquipmentTypeId");
 
-                    b.ToTable("EquipmentCategories", (string)null);
+                    b.ToTable("EquipmentCategories");
                 });
 
             modelBuilder.Entity("Leasing.Domain.Entities.EquipmentType", b =>
@@ -130,8 +128,7 @@ namespace Leasing.Infrastructure.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -141,20 +138,18 @@ namespace Leasing.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SystemId")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("EquipmentTypes", (string)null);
+                    b.ToTable("EquipmentTypes");
                 });
 
             modelBuilder.Entity("Leasing.Domain.Entities.Image", b =>
@@ -170,8 +165,7 @@ namespace Leasing.Infrastructure.Migrations
 
                     b.Property<string>("FilePath")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -183,7 +177,7 @@ namespace Leasing.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Images", (string)null);
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("Leasing.Domain.Entities.Location", b =>
@@ -262,16 +256,14 @@ namespace Leasing.Infrastructure.Migrations
 
                     b.Property<string>("Brand")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("EquipmentCategoryId")
                         .HasColumnType("int");
@@ -281,21 +273,18 @@ namespace Leasing.Infrastructure.Migrations
 
                     b.Property<string>("Model")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Specifications")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("YouTubeLink")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -303,7 +292,7 @@ namespace Leasing.Infrastructure.Migrations
 
                     b.HasIndex("EquipmentTypeId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Leasing.Domain.Entities.User", b =>
@@ -314,10 +303,16 @@ namespace Leasing.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BusinessType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GstNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsEmailVerified")
@@ -327,6 +322,9 @@ namespace Leasing.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PanNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
@@ -345,7 +343,9 @@ namespace Leasing.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Role")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -355,18 +355,16 @@ namespace Leasing.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
-                    b.UseTptMappingStrategy();
+                    b.HasDiscriminator<string>("Role").HasValue("User");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Leasing.Domain.Entities.BrandUser", b =>
                 {
                     b.HasBaseType("Leasing.Domain.Entities.User");
-
-                    b.Property<string>("BusinessType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ContactPersonName")
                         .IsRequired()
@@ -378,9 +376,6 @@ namespace Leasing.Infrastructure.Migrations
 
                     b.PrimitiveCollection<string>("EquipmentCategories")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GstNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("HasGstRegistration")
@@ -409,14 +404,14 @@ namespace Leasing.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("BrandUsers", (string)null);
+                    b.HasDiscriminator().HasValue("Brand");
                 });
 
             modelBuilder.Entity("Leasing.Domain.Entities.MstcUser", b =>
                 {
                     b.HasBaseType("Leasing.Domain.Entities.User");
 
-                    b.ToTable("MstcUsers", (string)null);
+                    b.HasDiscriminator().HasValue("MSTC");
                 });
 
             modelBuilder.Entity("Leasing.Domain.Entities.EquipmentCategory", b =>
@@ -456,24 +451,6 @@ namespace Leasing.Infrastructure.Migrations
                     b.Navigation("EquipmentCategory");
 
                     b.Navigation("EquipmentType");
-                });
-
-            modelBuilder.Entity("Leasing.Domain.Entities.BrandUser", b =>
-                {
-                    b.HasOne("Leasing.Domain.Entities.User", null)
-                        .WithOne()
-                        .HasForeignKey("Leasing.Domain.Entities.BrandUser", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Leasing.Domain.Entities.MstcUser", b =>
-                {
-                    b.HasOne("Leasing.Domain.Entities.User", null)
-                        .WithOne()
-                        .HasForeignKey("Leasing.Domain.Entities.MstcUser", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Leasing.Domain.Entities.EquipmentType", b =>

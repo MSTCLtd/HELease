@@ -12,7 +12,7 @@ namespace Leasing.Application.Interfaces
     {
         Task<bool> SendOtpAsync(string phone);
         //Task<(bool Success, bool IsNewUser, string Role)> VerifyOtpAsync(string phone, string otpCode);
-        Task<(bool Success, bool IsNewUser, string Role, string Token, string email, string name)> VerifyOtpAsync(string phone, string otpCode); // Updated
+        Task<(bool Success, bool IsNewUser, string Role, string Token, string email, string name,string reg_no)> VerifyOtpAsync(string phone, string otpCode); // Updated
         Task<bool> SendEmailOtpAsync(string email);
         Task<bool> VerifyEmailOtpAsync(string email, string otpCode, string phone);
         Task<(bool Success, string RegistrationNumber, string Token)> RegisterAsync(string phone, string name, string role, string email);
@@ -26,6 +26,25 @@ namespace Leasing.Application.Interfaces
         Task<(bool Success, string Message, string Otp)> SendOtpToBothAsync(int userId);
         Task<(bool Success, string Message, string Token)> VerifyOtpForLoginAsync(int userId, string otp);
         Task<(bool Success, string Message, User User)> RegisterMstcAdminAsync(string username, string password, string email, string phone, string name, string roBo, List<string> permissions); // New method
+        Task<(bool Success, string RegistrationNumber, string Token)> RegisterSupplierOrBrandAsync(
+            string phone,
+            string name,
+            string email,
+            string username,
+            string password,
+            string businessType,
+            string organizationPan,
+            string organizationName,
+            string supplierAddress,
+            string pinCode,
+            string district,
+            string state,
+            string contactPersonName,
+            List<string> equipmentCategories,
+            bool isMsme = false,
+            bool hasGstRegistration = false,
+            string gstNumber = null);
 
+        Task<bool> UpdateBrandProfileAsync(int userId, string name, string email, string businessType = null, string panNumber = null, string gstNumber = null);
     }
 }

@@ -363,4 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 
 /keys/
+/Leasing.Presentation/keys/key-cc841109-70d2-4800-95e2-dfd0e618a7ab.xml
+/.gitignore
+/keys/
 frontend/yarn.lock

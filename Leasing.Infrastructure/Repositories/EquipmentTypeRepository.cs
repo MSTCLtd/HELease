@@ -13,7 +13,7 @@ namespace Leasing.Infrastructure.Repositories
 
         public EquipmentTypeRepository(AppDbContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public async Task<List<EquipmentType>> GetAllAsync()
@@ -40,11 +40,13 @@ namespace Leasing.Infrastructure.Repositories
         public async Task AddAsync(EquipmentType equipmentType)
         {
             await _context.EquipmentTypes.AddAsync(equipmentType);
+            await _context.SaveChangesAsync(); // Save immediately to ensure consistency
         }
 
         public async Task UpdateAsync(EquipmentType equipmentType)
         {
             _context.EquipmentTypes.Update(equipmentType);
+            await _context.SaveChangesAsync(); // Save immediately to ensure consistency
         }
 
         public async Task SaveChangesAsync()

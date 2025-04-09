@@ -29,23 +29,23 @@ namespace Leasing.Presentation.Controllers
         [HttpPost("register/verify-otp")]
         public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
         {
-            var(success, isNewUser, role, token,email,name) = await _authService.VerifyOtpAsync(request.Phone, request.OtpCode);
+            var(success, isNewUser, role, token,email,name,reg_no) = await _authService.VerifyOtpAsync(request.Phone, request.OtpCode);
             if (success)
             {
                 if (!role.Equals("user", StringComparison.CurrentCultureIgnoreCase))
                 {
 
-                    return Ok(new { Message = "Invalid user type", status = 500 }); ;
+                    return BadRequest(new { Message = "Invalid Credentials", status = 500 }); ;
                 }
                 if (!isNewUser)
                 {
-                    return Ok(new { Message = "User already exists", isNewUser = false, status = false, Token = token, email,name });
+                    return Ok(new { Message = "User already exists", isNewUser = false, status = false, Token = token, email,name, RegistrationNumber =reg_no });
                 }
                 
                     
 
               
-                return Ok(new { Message = "OTP verified", IsNewUser = isNewUser, Role = role, status = true, email, name });
+                return Ok(new { Message = "OTP verified", IsNewUser = isNewUser, Role = role, status = true, email, name});
             }
             return BadRequest(new { Message = "Invalid or expired OTP", status = false });
         }
@@ -147,6 +147,39 @@ namespace Leasing.Presentation.Controllers
             });
         }
 
+        [HttpPost("register/brand")]
+        public async Task<IActionResult> RegisterSupplierOrBrand([FromBody] RegisterSupplierOrBrandRequest request)
+        {
+            var (success, registrationNumber, token) = await _authService.RegisterSupplierOrBrandAsync(
+                request.Phone,
+                request.Name,
+                request.Email,
+                request.Username,
+                request.Password,
+                request.BusinessType,
+                request.OrganizationPan,
+                request.OrganizationName,
+                request.SupplierAddress,
+                request.PinCode,
+                request.District,
+                request.State,
+                request.ContactPersonName,
+                request.EquipmentCategories,
+                request.IsMsme,
+                request.HasGstRegistration,
+                request.GstNumber
+            );
+            if (!success) return BadRequest(new { message = "Supplier/Brand registration failed" });
+            return Ok(new { registrationNumber, token });
+        }
+
+        [HttpPut("update-brand-profile/{userId}")]
+        public async Task<IActionResult> UpdateProfile(int userId, [FromBody] UpdateBrandProfileRequest request)
+        {
+            var success = await _authService.UpdateBrandProfileAsync(userId, request.Name, request.Email, request.BusinessType, request.PanNumber, request.GstNumber);
+            return success ? Ok(new { message = "Profile updated" }) : BadRequest(new { message = "Profile update failed" });
+        }
+
     }
 
     public class SendOtpRequest
@@ -184,6 +217,15 @@ namespace Leasing.Presentation.Controllers
         public string Name { get; set; }
         public string Email { get; set; }
     }
+
+    public class UpdateBrandProfileRequest
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string BusinessType { get; set; }
+        public string PanNumber { get; set; }
+        public string GstNumber { get; set; }
+    }
     public class UsernameLoginRequest
     {
         public string Username { get; set; }
@@ -206,5 +248,26 @@ namespace Leasing.Presentation.Controllers
         public string Name { get; set; }
         public string RoBo { get; set; }
         public List<string> Permissions { get; set; }
+    }
+
+    public class RegisterSupplierOrBrandRequest
+    {
+        public string Phone { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string BusinessType { get; set; } // "Brand", "Manufacturer", or "Dealer"
+        public string OrganizationPan { get; set; }
+        public string OrganizationName { get; set; }
+        public string SupplierAddress { get; set; }
+        public string PinCode { get; set; }
+        public string District { get; set; }
+        public string State { get; set; }
+        public string ContactPersonName { get; set; }
+        public List<string> EquipmentCategories { get; set; }
+        public bool IsMsme { get; set; }
+        public bool HasGstRegistration { get; set; }
+        public string GstNumber { get; set; }
     }
 }

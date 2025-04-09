@@ -1,159 +1,92 @@
-﻿using Leasing.Application.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Leasing.Application.DTOs;
+using Leasing.Application.Interfaces;
+using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Leasing.Presentation.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("api/products")]
-    //[Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
 
         public ProductController(IProductService productService)
         {
-            _productService = productService ?? throw new ArgumentNullException(nameof(productService));
+            _productService = productService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
             var products = await _productService.GetAllProductsAsync();
-            return Ok(new { Products = products });
+            return Ok(products);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
-            if (product == null)
-            {
-                return NotFound(new { Message = "Product not found" });
-            }
-            return Ok(new { Product = product });
+            return product != null ? Ok(product) : NotFound();
         }
 
-        [HttpGet("equipment-types")]
+        [HttpGet("types")]
         public async Task<IActionResult> GetEquipmentTypes()
         {
-            var equipmentTypes = await _productService.GetEquipmentTypesAsync();
-            return Ok(new { EquipmentTypes = equipmentTypes });
+            var types = await _productService.GetEquipmentTypesAsync();
+            return Ok(types);
         }
 
-        [HttpGet("brands")]
-        public async Task<IActionResult> GetBrands([FromQuery] int equipmentTypeId)
+        [HttpGet("brands/{equipmentTypeId}")]
+        public async Task<IActionResult> GetBrands(int equipmentTypeId)
         {
             var brands = await _productService.GetBrandsAsync(equipmentTypeId);
-            return Ok(new { Brands = brands });
+            return Ok(brands);
         }
 
-        [HttpGet("models")]
-        public async Task<IActionResult> GetModels([FromQuery] int equipmentTypeId, [FromQuery] string brand)
+        [HttpGet("models/{equipmentTypeId}/{brand}")]
+        public async Task<IActionResult> GetModels(int equipmentTypeId, string brand)
         {
             var models = await _productService.GetModelsAsync(equipmentTypeId, brand);
-            return Ok(new { Models = models });
+            return Ok(models);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddProduct([FromForm] AddProductRequest request)
+        public async Task<IActionResult> AddProduct(
+            int equipmentTypeId, int? equipmentCategoryId, string brand, string model,
+            string youTubeLink, string description, string specifications, List<IFormFile> images)
         {
-            var (success, message, product) = await _productService.AddProductAsync(
-                request.EquipmentTypeId,
-                request.EquipmentCategoryId,
-                request.Brand,
-                request.Model,
-                request.YouTubeLink,
-                request.Description,
-                request.Specifications,
-                request.Images
-            );
-
-            if (!success)
-            {
-                return BadRequest(new { Message = message });
-            }
-
-            return Ok(new { Message = message, Product = product });
+            var (success, message, product) = await _productService.AddProductAsync(equipmentTypeId, equipmentCategoryId, brand, model, youTubeLink, description, specifications, images);
+            if (!success) return BadRequest(new { message });
+            return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProduct(int id, [FromForm] UpdateProductRequest request)
+        public async Task<IActionResult> UpdateProduct(
+            int id, int equipmentTypeId, int? equipmentCategoryId, string brand, string model,
+            string youTubeLink, string description, string specifications, List<IFormFile> images, List<int> imagesToDelete)
         {
-            var imagesToDelete = request.ImagesToDelete?.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                .Select(int.Parse)
-                .ToList() ?? new List<int>();
-
-            var (success, message, product) = await _productService.UpdateProductAsync(
-                id,
-                request.EquipmentTypeId,
-                request.EquipmentCategoryId,
-                request.Brand,
-                request.Model,
-                request.YouTubeLink,
-                request.Description,
-                request.Specifications,
-                request.Images,
-                imagesToDelete
-            );
-
-            if (!success)
-            {
-                return BadRequest(new { Message = message });
-            }
-
-            return Ok(new { Message = message, Product = product });
+            var (success, message, product) = await _productService.UpdateProductAsync(id, equipmentTypeId, equipmentCategoryId, brand, model, youTubeLink, description, specifications, images, imagesToDelete);
+            if (!success) return BadRequest(new { message });
+            return Ok(product);
         }
 
-        [HttpDelete("brand")]
-        public async Task<IActionResult> DeleteBrand([FromQuery] int equipmentTypeId, [FromQuery] string brand)
+        [HttpDelete("brand/{equipmentTypeId}/{brand}")]
+        public async Task<IActionResult> DeleteBrand(int equipmentTypeId, string brand)
         {
             var (success, message) = await _productService.DeleteBrandAsync(equipmentTypeId, brand);
-            if (!success)
-            {
-                return BadRequest(new { Message = message });
-            }
-
-            return Ok(new { Message = message });
+            if (!success) return BadRequest(new { message });
+            return NoContent();
         }
 
-        [HttpDelete("model")]
-        public async Task<IActionResult> DeleteModel([FromQuery] int equipmentTypeId, [FromQuery] string brand, [FromQuery] string model)
+        [HttpDelete("model/{equipmentTypeId}/{brand}/{model}")]
+        public async Task<IActionResult> DeleteModel(int equipmentTypeId, string brand, string model)
         {
             var (success, message) = await _productService.DeleteModelAsync(equipmentTypeId, brand, model);
-            if (!success)
-            {
-                return BadRequest(new { Message = message });
-            }
-
-            return Ok(new { Message = message });
+            if (!success) return BadRequest(new { message });
+            return NoContent();
         }
-    }
-
-    public class AddProductRequest
-    {
-        public int EquipmentTypeId { get; set; }
-        public int? EquipmentCategoryId { get; set; }
-        public string Brand { get; set; }
-        public string Model { get; set; }
-        public string YouTubeLink { get; set; }
-        public string Description { get; set; }
-        public string Specifications { get; set; }
-        public List<IFormFile> Images { get; set; }
-    }
-
-    public class UpdateProductRequest
-    {
-        public int EquipmentTypeId { get; set; }
-        public int? EquipmentCategoryId { get; set; }
-        public string Brand { get; set; }
-        public string Model { get; set; }
-        public string YouTubeLink { get; set; }
-        public string Description { get; set; }
-        public string Specifications { get; set; }
-        public List<IFormFile> Images { get; set; }
-        public string ImagesToDelete { get; set; } // Comma-separated list of image IDs to delete
     }
 }

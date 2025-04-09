@@ -15,9 +15,9 @@
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         // Role-specific fields
-        public string? BusinessType { get; set; } // For Brand (e.g., "Brand", "Manufacturer")
-        public string? PanNumber { get; set; } // For Brand/MSTC
-        public string? GstNumber { get; set; } // For Brand/MSTC
+        //public string? BusinessType { get; set; } // For Brand (e.g., "Brand", "Manufacturer")
+        //public string? PanNumber { get; set; } // For Brand/MSTC
+        //public string? GstNumber { get; set; } // For Brand/MSTC
         public string? RoBo { get; set; } // For MSTC (e.g., "HO")
         public List<string>? Permissions { get; set; } = new List<string>();
 
