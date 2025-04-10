@@ -586,21 +586,21 @@ public class AuthService : IAuthService
         if (user == null)
         {
             _logger.LogWarning("Registration failed for {Phone}: Number already exists", phone);
-            return (false, null, null);
+            return (false, "Registration failed. Number already exists", null);
         }
 
         var existingUserWithEmail = await _userRepository.GetByEmailAsync(email);
         if (existingUserWithEmail != null && existingUserWithEmail.Phone != phone)
         {
             _logger.LogWarning("Email {Email} is already registered to another user", email);
-            return (false, null, null);
+            return (false, "Email  is already registered to another user", null);
         }
 
         var existingUserWithUsername = await _userRepository.GetByUsernameAsync(username);
         if (existingUserWithUsername != null)
         {
             _logger.LogWarning("Username {Username} is already registered", username);
-            return (false, null, null);
+            return (false, "Username  already registered", null);
         }
 
         var brandUser = new BrandUser
@@ -637,7 +637,7 @@ public class AuthService : IAuthService
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Registration failed for phone {Phone} or email {Email} due to duplicate key", phone, email);
-            return (false, null, null);
+            return (false, "Registration failed for phone  or email due to duplicate key", null);
         }
 
         string prefix = "BRND";
