@@ -583,7 +583,7 @@ public class AuthService : IAuthService
         //    return (false, null, null);
         //}
 
-        if (user == null)
+        if (user != null)
         {
             _logger.LogWarning("Registration failed for {Phone}: Number already exists", phone);
             return (false, "Registration failed. Number already exists", null);
