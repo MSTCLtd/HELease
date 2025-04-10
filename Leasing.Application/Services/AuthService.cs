@@ -368,9 +368,24 @@ public class AuthService : IAuthService
             return (false, "Email and Phone are required", null, null);
         }
 
+        if (user.Role == "Brand")
+        {
+            // For Brand: Generate final token immediately
+            var token = GenerateJwtToken(user);
+            _logger.LogInformation("Brand user {Username} logged in successfully", username);
+            return (true, "Login successful", token, user);
+        }
+        else // MSTC
+        {
+            // For MSTC: Generate temporary token and proceed to OTP
+            var tempToken = GenerateJwtToken(user, false);
+            _logger.LogInformation("MSTC user {Username} requires OTP verification", username);
+            return (true, "Proceed to OTP verification", tempToken, user);
+        }
+
         // Generate temporary token for OTP verification
-        var tempToken = GenerateJwtToken(user, false);
-        return (true, "Proceed to OTP verification", tempToken, user);
+        //var tempToken = GenerateJwtToken(user, false);
+        //return (true, "Proceed to OTP verification", tempToken, user);
     }
 
     // New method to send OTP to both email and mobile

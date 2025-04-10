@@ -81,14 +81,22 @@ namespace Leasing.Presentation.Controllers
                 //return BadRequest(new { Message = message });
             }
 
-            // Send OTP to both email and mobile
-            var (otpSuccess, otpMessage, otp) = await _authService.SendOtpToBothAsync(user.Id);
-            if (!otpSuccess)
+            if (user.Role == "Brand")
             {
-                return StatusCode(500, new { Message = otpMessage });
+                // Brand login: Return final token immediately
+                return Ok(new { Message = message, Token = tempToken, UserId = user.Id, Role = user.Role });
             }
-
-            return Ok(new { Message = message, TempToken = tempToken, UserId = user.Id, OtpSent = true });
+            else // MSTC
+            {
+                // MSTC login: Send OTP and return temporary token
+                var (otpSuccess, otpMessage, otp) = await _authService.SendOtpToBothAsync(user.Id);
+                if (!otpSuccess)
+                {
+                    return StatusCode(500, new { Message = otpMessage });
+                }
+                return Ok(new { Message = message, TempToken = tempToken, UserId = user.Id, OtpSent = true, Role = user.Role });
+            }
+            
         }
 
         [HttpPost("verify-login-otp")]
