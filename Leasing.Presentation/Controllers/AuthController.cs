@@ -158,7 +158,7 @@ namespace Leasing.Presentation.Controllers
         [HttpPost("register/brand")]
         public async Task<IActionResult> RegisterSupplierOrBrand([FromBody] RegisterSupplierOrBrandRequest request)
         {
-            var (success, registrationNumber, token) = await _authService.RegisterSupplierOrBrandAsync(
+            var (success, registrationNumber, token, organizationName) = await _authService.RegisterSupplierOrBrandAsync(
                 request.Phone,
                 request.Name,
                 request.Email,
@@ -178,7 +178,7 @@ namespace Leasing.Presentation.Controllers
                 request.GstNumber
             );
             if (!success) return BadRequest(new { message = registrationNumber });
-            return Ok(new { registrationNumber, token });
+            return Ok(new { registrationNumber, token,organizationName });
         }
 
         [HttpPut("update-brand-profile/{userId}")]
