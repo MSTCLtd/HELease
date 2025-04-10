@@ -16,12 +16,12 @@ namespace Leasing.Infrastructure.Repositories
     public class ProductRepository : IProductRepository
     {
         private readonly AppDbContext _context;
-        private readonly ElasticsearchClient _client;
+        //private readonly ElasticsearchClient _client;
 
-        public ProductRepository(AppDbContext context, ElasticsearchClient elasticClient)
+        public ProductRepository(AppDbContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-            _client = elasticClient ?? throw new ArgumentNullException(nameof(elasticClient));
+           // _client = elasticClient ?? throw new ArgumentNullException(nameof(elasticClient));
         }
 
         public async Task<List<Product>> GetAllProductsAsync()
@@ -98,42 +98,42 @@ namespace Leasing.Infrastructure.Repositories
             }
         }
 
-        public async Task IndexProductAsync(Product product)
-        {
-            var response = await _client.IndexAsync(new IndexRequest<Product>("products")
-            {
-                Document = product,
-                //Id = product.Id.ToString(),
-                Refresh = Refresh.WaitFor
-            });
+        //public async Task IndexProductAsync(Product product)
+        //{
+        //    var response = await _client.IndexAsync(new IndexRequest<Product>("products")
+        //    {
+        //        Document = product,
+        //        //Id = product.Id.ToString(),
+        //        Refresh = Refresh.WaitFor
+        //    });
 
-            if (!response.IsValidResponse)
-            {
-                throw new Exception($"Elasticsearch indexing failed: {response.DebugInformation}");
-            }
-        }
+        //    if (!response.IsValidResponse)
+        //    {
+        //        throw new Exception($"Elasticsearch indexing failed: {response.DebugInformation}");
+        //    }
+        //}
 
-        public async Task UpdateIndexAsync(Product product)
-        {
-            var response = await _client.UpdateAsync<Product, Product>(
-                "products",
-                product.Id,
-                u => u.Doc(product).Refresh(Refresh.WaitFor));
+        //public async Task UpdateIndexAsync(Product product)
+        //{
+        //    var response = await _client.UpdateAsync<Product, Product>(
+        //        "products",
+        //        product.Id,
+        //        u => u.Doc(product).Refresh(Refresh.WaitFor));
 
-            if (!response.IsValidResponse)
-            {
-                throw new Exception($"Elasticsearch update failed: {response.DebugInformation}");
-            }
-        }
+        //    if (!response.IsValidResponse)
+        //    {
+        //        throw new Exception($"Elasticsearch update failed: {response.DebugInformation}");
+        //    }
+        //}
 
-        public async Task DeleteFromIndexAsync(int id)
-        {
-            var response = await _client.DeleteAsync("products", id, d => d.Refresh(Refresh.WaitFor));
+        //public async Task DeleteFromIndexAsync(int id)
+        //{
+        //    var response = await _client.DeleteAsync("products", id, d => d.Refresh(Refresh.WaitFor));
 
-            if (!response.IsValidResponse)
-            {
-                throw new Exception($"Elasticsearch delete failed: {response.DebugInformation}");
-            }
-        }
+        //    if (!response.IsValidResponse)
+        //    {
+        //        throw new Exception($"Elasticsearch delete failed: {response.DebugInformation}");
+        //    }
+        //}
     }
 }

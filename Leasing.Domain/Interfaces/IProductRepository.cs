@@ -15,9 +15,9 @@ namespace Leasing.Domain.Interfaces
         Task UpdateProductAsync(Product product);
         Task DeleteProductAsync(int id);
 
-        // Elasticsearch methods
-        Task IndexProductAsync(Product product);
-        Task UpdateIndexAsync(Product product);
-        Task DeleteFromIndexAsync(int id);
+        //// Elasticsearch methods
+        //Task IndexProductAsync(Product product);
+        //Task UpdateIndexAsync(Product product);
+        //Task DeleteFromIndexAsync(int id);
     }
 }
