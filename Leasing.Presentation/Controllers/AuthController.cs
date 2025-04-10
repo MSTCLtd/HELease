@@ -169,7 +169,7 @@ namespace Leasing.Presentation.Controllers
                 request.HasGstRegistration,
                 request.GstNumber
             );
-            if (!success) return BadRequest(new { message = "Supplier/Brand registration failed" });
+            if (!success) return BadRequest(new { message = registrationNumber });
             return Ok(new { registrationNumber, token });
         }
 

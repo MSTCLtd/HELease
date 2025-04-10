@@ -544,17 +544,17 @@ public class AuthService : IAuthService
         if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
         {
             _logger.LogWarning("Invalid email {Email} for phone {Phone}", email, phone);
-            return (false, null, null);
+            return (false, "Invalid email Email for phone Phone", null);
         }
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
         {
             _logger.LogWarning("Username and password are required for phone {Phone}", phone);
-            return (false, null, null);
+            return (false, "Username and password are required", null);
         }
         if (string.IsNullOrWhiteSpace(organizationPan) || string.IsNullOrWhiteSpace(organizationName))
         {
             _logger.LogWarning("Organization PAN and Name are required for phone {Phone}", phone);
-            return (false, null, null);
+            return (false, "Organization PAN and Name are required", null);
         }
         if (string.IsNullOrWhiteSpace(businessType) || !new[] { "Brand", "Manufacturer", "Dealer" }.Contains(businessType))
         {
@@ -577,9 +577,15 @@ public class AuthService : IAuthService
         }
 
         var user = await _userRepository.GetByPhoneAsync(phone);
-        if (user == null || !user.IsVerified || !user.IsEmailVerified || !string.IsNullOrEmpty(user.RegistrationNumber))
+        //if (user == null || !user.IsVerified || !user.IsEmailVerified || !string.IsNullOrEmpty(user.RegistrationNumber))
+        //{
+        //    _logger.LogWarning("Registration failed for {Phone}: not verified, email not verified, or already registered", phone);
+        //    return (false, null, null);
+        //}
+
+        if (user == null)
         {
-            _logger.LogWarning("Registration failed for {Phone}: not verified, email not verified, or already registered", phone);
+            _logger.LogWarning("Registration failed for {Phone}: Number already exists", phone);
             return (false, null, null);
         }
 
