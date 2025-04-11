@@ -1,18 +1,25 @@
 import { Button, Card, TextInput } from 'flowbite-react'
 import Link from 'next/link';
 import React from 'react'
+import ChangingText from '../ChangingText';
+import service from '../../../service';
 
 export default function SellerLoginForm() {
     const login = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const formData = new FormData(e.target as HTMLFormElement);
         console.log(formData.get('username'));
-
+        service.post("/auth/login/username", {
+            username: formData.get('username'),
+            password: formData.get('password')
+        }).then(response=>{
+            
+        })
     }
 
     return (
         <div>
-            <h1 className='text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white'>Login as Seller</h1>
+            <h1 className='text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center'>Login as <ChangingText list={['Brand', 'Manufacturer', 'Supplier']} /></h1>
             <br />
             <form onSubmit={login}>
                 <label htmlFor="username" className='dark:text-slate-400'>Username</label>

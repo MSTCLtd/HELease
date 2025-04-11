@@ -14,6 +14,7 @@ import type { CustomFlowbiteTheme } from "flowbite-react";
 import { Flowbite } from "flowbite-react";
 import settings from '../../tailwind.config'
 import "@elastic/react-search-ui-views/lib/styles/styles.css";
+import 'react-data-grid/lib/styles.css';
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -50,7 +51,7 @@ function Loader() {
 const customTheme: CustomFlowbiteTheme = {
 	button: {
 		color: {
-			primary: 'bg-gradient-to-r from-[#007fff] to-[#00bfff] text-white',
+			primary: 'bg-gradient-to-r from-[#007fff] to-[#00bfff] text-white hover:opacity-80 transition-all',
 			secondary: 'bg-gradient-to-l from-[#ffcc00] to-[#ff4500]',
 		}
 	}

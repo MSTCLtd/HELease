@@ -1,61 +1,59 @@
 import SellerMaster from '@/layouts/SellerMaster'
 import { Button } from 'flowbite-react'
 import Link from 'next/link'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { HiUserAdd } from 'react-icons/hi'
 import { DataTable } from "simple-datatables"
 import "simple-datatables/dist/style.css"
+import service from '../../../../service'
+import { User } from '@/types/User'
+import { Column, DataGrid, SortColumn } from 'react-data-grid'
+
+const columns: readonly Column<User>[] = [
+    { key: 'name', name: 'Name' },
+    { key: 'email', name: 'Email' },
+    { key: 'registrationNumber', name: 'Registration Number' },
+];
 
 
 export default function index() {
-    useEffect(() => {
-        const dataTable = new DataTable("#search-table", {
-            searchable: true,
-            fixedHeight: true,
-            classes:{
-            
-            },
-        });
+    const [users, setUsers] = useState<User[]>([])
+    const [sortColumns, setSortColumns] = useState<readonly SortColumn[]>([{ columnKey: 'name', direction: 'ASC' }]);
 
+    const fetchUsers = () => {
+        service.get("/mstc-admin/mstc-users").then(response => {
+            setUsers(response.data.mstcUsers)
+        })
+    }
+
+    useEffect(() => {
+        fetchUsers()
+
+        // const dataTable = new DataTable("#search-table", {
+        //     searchable: true,
+        //     fixedHeight: true,
+        // });
+        // dataTable.insert({ data: users.map(user => [user.name, user.email, user.registrationNumber]) })
     }, [])
 
     return (
         <SellerMaster title='Users'>
-            <Button href='/seller/users/add' className='mb-4 w-fit float-right' as={Link} color='primary'><HiUserAdd className='mr-2' size={20} /> Add User</Button>
-            <table id="search-table">
-                <thead>
-                    <tr>
-                        <th>
-                            <span className="flex items-center">
-                                Company Name
-                            </span>
-                        </th>
-                        <th>
-                            <span className="flex items-center">
-                                Ticker
-                            </span>
-                        </th>
-                        <th>
-                            <span className="flex items-center">
-                                Stock Price
-                            </span>
-                        </th>
-                        <th>
-                            <span className="flex items-center">
-                                Market Capitalization
-                            </span>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody className="font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    <tr>
-                        <td>Apple Inc.</td>
-                        <td>AAPL</td>
-                        <td>$192.58</td>
-                        <td>$3.04T</td>
-                    </tr>
-                </tbody>
-            </table>
+            <Button href='/seller/users/add' className='mb-4 w-fit' as={Link} color='primary'><HiUserAdd className='mr-2' size={20} /> Add User</Button>
+            <DataGrid columns={columns}
+                rows={users}
+                className='dark:bg-slate-600'
+                onSortColumnsChange={setSortColumns}
+                sortColumns={sortColumns}
+                defaultColumnOptions={{
+                    minWidth: 100,
+                    resizable: true,
+                    sortable: true,
+                    draggable: true
+                }}
+                rowHeight={30}
+            />
+
+
         </SellerMaster>
     )
 }

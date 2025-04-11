@@ -4,9 +4,32 @@
 @plugin "flowbite/plugin";
 @source "../node_modules/flowbite";
 
-@theme {
-  --primary: #5a84c0;
-  --secondary: #f9ad23;
+@layer base {
+  :root {
+    --primary: #0193fd;
+    --secondary: #fe6901;
+  }
+}
+
+@layer utilities {
+  .bg-primary {
+    background-color: var(--primary);
+  }
+  .bg-secondary {
+    background-color: var(--secondary);
+  }
+  .text-primary {
+    color: var(--primary);
+  }
+  .text-secondary {
+    color: var(--secondary);
+  }
+  .border-primary {
+    border-color: var(--primary);
+  }
+  .border-secondary {
+    border-color: var(--secondary);
+  }
 }
 
 :root {
@@ -59,4 +82,12 @@ body {
 
 .hover\:pause:hover {
   animation-play-state: paused;
+}
+
+
+.blinking-cursor {
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
 }

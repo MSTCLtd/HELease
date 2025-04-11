@@ -1,5 +1,5 @@
 import BuyerRegistrationForm from '@/components/BuyerRegistrationForm';
-import SellerRegistrationForm from '@/components/SellerRegistrationForm';
+import SellerRegistrationForm from '@/components/Seller/SellerRegistrationForm';
 import CommonMaster from '@/layouts/CommonMaster'
 import { Button, Label, Tabs, TabsRef, TextInput } from 'flowbite-react'
 import Link from 'next/link';

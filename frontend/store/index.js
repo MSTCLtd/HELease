@@ -8,7 +8,8 @@ const HELSlice = createSlice({
     initialState: {
         user: null,
         adminUser: null,
-        language: 'en'
+        language: 'en',
+        seller: null
     },
     reducers: {
         setUser(state, payload) {
@@ -19,6 +20,9 @@ const HELSlice = createSlice({
         },
         setLanguage(state, payload) {
             state.language = payload.payload
+        },
+        setSeller(state, payload) {
+            state.seller = payload.payload
         }
     }
 })

@@ -1,6 +1,6 @@
 import BuyerRegistrationForm from '@/components/BuyerRegistrationForm'
-import SellerLoginForm from '@/components/SellerLoginForm'
-import SellerRegistrationForm from '@/components/SellerRegistrationForm'
+import SellerLoginForm from '@/components/Seller/SellerLoginForm'
+import SellerRegistrationForm from '@/components/Seller/SellerRegistrationForm'
 import CommonMaster from '@/layouts/CommonMaster'
 import React from 'react'
 
