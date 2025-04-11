@@ -28,8 +28,8 @@ export default function SellerMaster({ children, title = "Seller " }: { children
             </Head>
             <SellerNavbar />
             <SellerSidenav isOpen={isOpen} />
-            <main className="p-4 pl-8 md:ml-64 min-h-screen pt-20 dark:bg-slate-800">
-                <p className='text-3xl mb-5 font-bakbak dark:text-white'>{title}</p>
+            <main className="p-4 pl-8 md:ml-64 min-h-screen pt-20 bg-gray-100 dark:bg-slate-800">
+                <p className='text-3xl mb-5 font-bakbak text-black dark:text-white'>{title}</p>
                 {children}
             </main>
             <SellerFooter />

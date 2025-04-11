@@ -14,7 +14,7 @@ export default function Logo() {
                         <Image src={logo2} alt="logo" width={65} />
                     </div>
                     <div className="col-span-2">
-                        <span className="font-extrabold text-3xl font-bakbak dark:text-white">
+                        <span className="font-extrabold text-3xl font-bakbak dark:text-white text-black">
                             {t('home.name')}
                         </span>
                         <p className='text-sm'><span style={{ color: '#0193fd' }}>Empowering</span> <span style={{ color: '#fe6901' }}>Growth</span></p>

@@ -41,7 +41,7 @@ export default function index() {
             <Button href='/seller/users/add' className='mb-4 w-fit' as={Link} color='primary'><HiUserAdd className='mr-2' size={20} /> Add User</Button>
             <DataGrid columns={columns}
                 rows={users}
-                className='dark:bg-slate-600'
+                className='bg-white dark:bg-slate-600'
                 onSortColumnsChange={setSortColumns}
                 sortColumns={sortColumns}
                 defaultColumnOptions={{

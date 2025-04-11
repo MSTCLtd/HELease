@@ -3,6 +3,7 @@
 @tailwind utilities;
 @plugin "flowbite/plugin";
 @source "../node_modules/flowbite";
+@plugin "flowbite-typography";
 
 @layer base {
   :root {
@@ -40,7 +41,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #333;
   }
 }
 
@@ -90,4 +91,41 @@ body {
 }
 @keyframes blink {
   50% { opacity: 0; }
+}
+
+.menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 32px;
+
+  margin: 0;
+  padding: 0 8px;
+
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: currentColor;
+
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1;
+  font-weight: inherit;
+
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.menu-button {
+  width: 32px;
+  padding: 0;
+}
+.ProseMirror:focus {
+  outline: none;
+}
+.ProseMirror {        
+  min-height: 100px;
+  max-height: 100px;
+  overflow: scroll;
 }

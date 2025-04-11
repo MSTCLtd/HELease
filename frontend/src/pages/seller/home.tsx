@@ -125,32 +125,32 @@ export default function home() {
                 <Card className='dark:text-slate-400'>
                     <div className="flex flex-row items-center justify-center gap-12">
                         <div className='flex flex-col items-center justify-center'>
-                            <span className="text-4xl font-bold">123</span>
-                            <span className="text-sm">Offices</span>
+                            <span className="text-4xl font-bold text-black dark:text-slate-100">123</span>
+                            <span className="text-sm text-slate-500 dark:text-slate-400">Offices</span>
                         </div>
                         <div className='flex flex-col items-center justify-center'>
-                            <span className="text-4xl font-bold">456</span>
-                            <span className="text-sm">Users</span>
+                            <span className="text-4xl font-bold text-black dark:text-slate-100">456</span>
+                            <span className="text-sm text-slate-500 dark:text-slate-400">Users</span>
                         </div>
                     </div>
                 </Card>
                 <Card className='dark:text-slate-400'>
                     <div className="flex flex-row items-center justify-center gap-12">
                         <div className='flex flex-col items-center justify-center'>
-                            <span className="text-4xl font-bold">123</span>
-                            <span className="text-sm">Active Products</span>
+                            <span className="text-4xl font-bold text-black dark:text-slate-100">123</span>
+                            <span className="text-sm text-slate-500 dark:text-slate-400">Active Products</span>
                         </div>
                         <div className='flex flex-col items-center justify-center'>
-                            <span className="text-4xl font-bold">456</span>
-                            <span className="text-sm">Inactive Products</span>
+                            <span className="text-4xl font-bold text-black dark:text-slate-100">456</span>
+                            <span className="text-sm text-slate-500 dark:text-slate-400">Inactive Products</span>
                         </div>
                     </div>
                 </Card>
                 <Card className='dark:text-slate-400'>
                     <div className="flex flex-row items-center justify-center">
                         <div className='flex flex-col items-center justify-center'>
-                            <span className="text-4xl font-bold">FREE</span>
-                            <span className="text-sm">Contract</span>
+                            <span className="text-4xl font-bold text-black dark:text-slate-100">FREE</span>
+                            <span className="text-sm text-slate-500 dark:text-slate-400">Contract</span>
                         </div>
                     </div>
                 </Card>

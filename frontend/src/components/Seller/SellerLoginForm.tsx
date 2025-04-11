@@ -1,10 +1,16 @@
-import { Button, Card, TextInput } from 'flowbite-react'
+import { Button, Card, Label, TextInput } from 'flowbite-react'
 import Link from 'next/link';
 import React from 'react'
 import ChangingText from '../ChangingText';
 import service from '../../../service';
+import { useDispatch } from 'react-redux';
+import { HELActions } from '../../../store';
+import { useRouter } from 'next/router';
 
 export default function SellerLoginForm() {
+    const dispatch = useDispatch()
+    const router = useRouter()
+
     const login = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const formData = new FormData(e.target as HTMLFormElement);
@@ -12,8 +18,14 @@ export default function SellerLoginForm() {
         service.post("/auth/login/username", {
             username: formData.get('username'),
             password: formData.get('password')
-        }).then(response=>{
-            
+        }).then(response => {
+            dispatch(HELActions.setSeller({
+                token: response.data.token,
+                name: response.data.name,
+                email: response.data.email,
+                registrationNumber: response.data.registrationNumber
+            }))
+            router.push("/seller/home")
         })
     }
 
@@ -22,11 +34,11 @@ export default function SellerLoginForm() {
             <h1 className='text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center'>Login as <ChangingText list={['Brand', 'Manufacturer', 'Supplier']} /></h1>
             <br />
             <form onSubmit={login}>
-                <label htmlFor="username" className='dark:text-slate-400'>Username</label>
-                <TextInput name='username' id='username' autoFocus placeholder='Seller Username' />
+                <Label htmlFor="username" className='dark:text-slate-400'>Username</Label>
+                <TextInput name='username'  id='username' autoFocus placeholder='Seller Username' />
                 <br />
-                <label htmlFor="password" className='dark:text-slate-400'>Password</label>
-                <TextInput name='password' id='password' placeholder='Seller Password' />
+                <Label htmlFor="password" className='dark:text-slate-400'>Password</Label>
+                <TextInput name='password' type='password' id='password' placeholder='Seller Password' />
                 <br />
                 <Button fullSized color='primary' type='submit'>Sign In</Button>
             </form>

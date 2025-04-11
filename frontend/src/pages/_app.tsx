@@ -54,6 +54,15 @@ const customTheme: CustomFlowbiteTheme = {
 			primary: 'bg-gradient-to-r from-[#007fff] to-[#00bfff] text-white hover:opacity-80 transition-all',
 			secondary: 'bg-gradient-to-l from-[#ffcc00] to-[#ff4500]',
 		}
+	},
+	textInput: {
+		field: {
+			input: {
+				colors: {
+					primary: 'dark:bg-[#374151] text-black dark:text-white mt-1',
+				}
+			}
+		}
 	}
 }
 

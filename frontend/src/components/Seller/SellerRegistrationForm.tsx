@@ -5,6 +5,7 @@ import service from '../../../service';
 import { EquipmentType } from '@/types/EquipmentType';
 import { useRouter } from 'next/router';
 import ChangingText from '../ChangingText';
+import Link from 'next/link';
 
 // Define types for the form data structure
 interface FormData {
@@ -193,7 +194,6 @@ const SellerRegistrationForm: React.FC = () => {
             hasGstRegistration: formData.businessInfo.hasGstRegistration,
             gstNumber: formData.businessInfo.gstNumber
         };
-        alert('Form submitted! Data: ' + JSON.stringify(submitData, null, 2));
 
         service.post("/auth/register/brand", submitData).then(response => {
             setMsg(response.data.registrationNumber)
@@ -209,7 +209,7 @@ const SellerRegistrationForm: React.FC = () => {
 
                 return (
                     <div className="space-y-4">
-                        <h2 className="text-xl font-semibold dark:text-slate-200">Business Information</h2>
+                        <h2 className="text-xl font-semibold text-black dark:text-slate-200">Business Information</h2>
                         <div>
                             <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1">Seller Type</label>
                             <div className="flex space-x-4">
@@ -223,7 +223,7 @@ const SellerRegistrationForm: React.FC = () => {
                                             onChange={(e) => handleChange('businessInfo', 'businessType', e.target.value)}
                                             className="h-4 w-4 text-primary focus:ring-indigo-500 border-gray-300"
                                         />
-                                        <span className="ml-2 text-sm text-gray-700">{type}</span>
+                                        <span className="ml-2 text-sm text-gray-700 dark:text-white">{type}</span>
                                     </label>
                                 ))}
                             </div>
@@ -286,7 +286,7 @@ const SellerRegistrationForm: React.FC = () => {
             case 1: // Business Information
                 return (
                     <div className="space-y-4">
-                        <h2 className="text-xl font-semibold dark:text-slate-200">Personal Information</h2>
+                        <h2 className="text-xl font-semibold text-black dark:text-slate-200">Personal Information</h2>
 
                         <div>
                             <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1">Contact Person Name</label>
@@ -344,7 +344,7 @@ const SellerRegistrationForm: React.FC = () => {
             case 2: // Address Information
                 return (
                     <div className="space-y-4">
-                        <h2 className="text-xl font-semibold dark:text-slate-200">Address Information</h2>
+                        <h2 className="text-xl font-semibold text-black dark:text-slate-200">Address Information</h2>
                         <div>
                             <label className="block text-sm font-medium text-gray-900 dark:text-gray-300 mb-1">Supplier Address</label>
                             <textarea
@@ -419,7 +419,7 @@ const SellerRegistrationForm: React.FC = () => {
             case 3: // Equipment Categories
                 return (
                     <div className="space-y-4">
-                        <h2 className="text-xl font-semibold dark:text-slate-200">Equipment Categories</h2>
+                        <h2 className="text-xl font-semibold text-black dark:text-slate-200">Equipment Categories</h2>
                         <p className="text-sm text-gray-500 dark:text-gray-400">Select all categories that apply to your business</p>
 
                         <div className="space-y-2">
@@ -432,7 +432,7 @@ const SellerRegistrationForm: React.FC = () => {
                                         onChange={() => handleCategoryChange(category)}
                                         className="h-4 w-4 text-primary focus:ring-indigo-500 border-gray-300 rounded"
                                     />
-                                    <label htmlFor={`category-${index}`} className="text-sm font-medium text-gray-700">{category}</label>
+                                    <label htmlFor={`category-${index}`} className="text-sm font-medium text-gray-700 dark:text-slate-300">{category}</label>
                                 </div>
                             ))}
                         </div>
@@ -442,9 +442,9 @@ const SellerRegistrationForm: React.FC = () => {
             case 4: // Review
                 return (
                     <div className="space-y-6">
-                        <h2 className="text-xl font-semibold dark:text-slate-200">Review Your Information</h2>
+                        <h2 className="text-xl font-semibold text-black dark:text-slate-200">Review Your Information</h2>
 
-                        <div className="bg-gray-50 p-4 rounded-lg">
+                        <div className="bg-gray-50 p-4 rounded-lg dark:bg-slate-900">
                             <h3 className="font-medium text-gray-900 dark:text-gray-300 mb-2">Personal Information</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 <p><span className="font-medium">Name:</span> {formData.personalInfo.name}</p>
@@ -455,7 +455,7 @@ const SellerRegistrationForm: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-gray-50 p-4 rounded-lg">
+                        <div className="bg-gray-50 p-4 rounded-lg dark:bg-slate-900">
                             <h3 className="font-medium text-gray-900 dark:text-gray-300 mb-2">Business Information</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 <p><span className="font-medium">Business Type:</span> {formData.businessInfo.businessType}</p>
@@ -469,7 +469,7 @@ const SellerRegistrationForm: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-gray-50 p-4 rounded-lg">
+                        <div className="bg-gray-50 p-4 rounded-lg dark:bg-slate-900">
                             <h3 className="font-medium text-gray-900 dark:text-gray-300 mb-2">Address Information</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 <p><span className="font-medium">Address:</span> {formData.addressInfo.supplierAddress}</p>
@@ -480,7 +480,7 @@ const SellerRegistrationForm: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-gray-50 p-4 rounded-lg">
+                        <div className="bg-gray-50 p-4 rounded-lg dark:bg-slate-900">
                             <h3 className="font-medium text-gray-900 dark:text-gray-300 mb-2">Equipment Categories</h3>
                             <div className="flex flex-wrap gap-2">
                                 {formData.equipmentInfo.equipmentCategories.length > 0 ? (
@@ -566,7 +566,7 @@ const SellerRegistrationForm: React.FC = () => {
                 </button>
 
                 {currentStep < steps.length - 1 ? (
-                    <Button
+                    <Button size='sm'
                         color='primary'
                         onClick={nextStep}
                         className="inline-flex items-center border border-transparent text-sm font-medium rounded-md shadow-sm"
@@ -575,16 +575,20 @@ const SellerRegistrationForm: React.FC = () => {
                         <HiChevronRight className="ml-2 h-4 w-4" />
                     </Button>
                 ) : (
-                    <button
+                    <Button size='sm'
+                        color='success'
                         type="button"
                         onClick={handleSubmit}
-                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700"
+                        className="inline-flex items-center px-4 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700"
                     >
-                        Submit
-                    </button>
+                        Register
+                    </Button>
                 )}
             </div>
         </div>
+        <center className='p-4'>
+            <Link href="/seller/login" className='text-primary'>Already registered? Sign In</Link>
+        </center>
         <Modal show={err != ''} onClose={() => setErr('')}>
             <ModalHeader className='text-2xl text-red-600'>Error</ModalHeader>
             <ModalBody>
