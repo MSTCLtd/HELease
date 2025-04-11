@@ -368,9 +368,24 @@ public class AuthService : IAuthService
             return (false, "Email and Phone are required", null, null);
         }
 
+        if (user.Role == "Brand")
+        {
+            // For Brand: Generate final token immediately
+            var token = GenerateJwtToken(user);
+            _logger.LogInformation("Brand user {Username} logged in successfully", username);
+            return (true, "Login successful", token, user);
+        }
+        else // MSTC
+        {
+            // For MSTC: Generate temporary token and proceed to OTP
+            var tempToken = GenerateJwtToken(user, false);
+            _logger.LogInformation("MSTC user {Username} requires OTP verification", username);
+            return (true, "Proceed to OTP verification", tempToken, user);
+        }
+
         // Generate temporary token for OTP verification
-        var tempToken = GenerateJwtToken(user, false);
-        return (true, "Proceed to OTP verification", tempToken, user);
+        //var tempToken = GenerateJwtToken(user, false);
+        //return (true, "Proceed to OTP verification", tempToken, user);
     }
 
     // New method to send OTP to both email and mobile
@@ -519,7 +534,7 @@ public class AuthService : IAuthService
     }
 
     private bool IsValidRole(string role) => role is "User" or "Brand" or "MSTC";
-    public async Task<(bool Success, string RegistrationNumber, string Token)> RegisterSupplierOrBrandAsync(
+    public async Task<(bool Success, string RegistrationNumber, string Token, string OrganizationName)> RegisterSupplierOrBrandAsync(
              string phone,
              string name,
              string email,
@@ -544,57 +559,63 @@ public class AuthService : IAuthService
         if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
         {
             _logger.LogWarning("Invalid email {Email} for phone {Phone}", email, phone);
-            return (false, null, null);
+            return (false, "Invalid email Email for phone Phone", null,null);
         }
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
         {
             _logger.LogWarning("Username and password are required for phone {Phone}", phone);
-            return (false, null, null);
+            return (false, "Username and password are required", null,null);
         }
         if (string.IsNullOrWhiteSpace(organizationPan) || string.IsNullOrWhiteSpace(organizationName))
         {
             _logger.LogWarning("Organization PAN and Name are required for phone {Phone}", phone);
-            return (false, null, null);
+            return (false, "Organization PAN and Name are required", null,null);
         }
         if (string.IsNullOrWhiteSpace(businessType) || !new[] { "Brand", "Manufacturer", "Dealer" }.Contains(businessType))
         {
             _logger.LogWarning("Invalid businessType {BusinessType} for phone {Phone}. Must be 'Brand', 'Manufacturer', or 'Dealer'", businessType, phone);
-            return (false, "Invalid businessType", null);
+            return (false, "Invalid businessType", null,null);
         }
 
         // Validate PAN
         if (!IsValidPan(organizationPan))
         {
             _logger.LogWarning("Invalid Organization PAN {Pan} for phone {Phone}", organizationPan, phone);
-            return (false, "Invalid Organization PAN", null);
+            return (false, "Invalid Organization PAN", null,null);
         }
 
         // Validate GST if provided
         if (hasGstRegistration && !string.IsNullOrWhiteSpace(gstNumber) && !IsValidGst(gstNumber))
         {
             _logger.LogWarning("Invalid GST Number {Gst} for phone {Phone}", gstNumber, phone);
-            return (false, "Invalid GST Number", null);
+            return (false, "Invalid GST Number", null,null);
         }
 
         var user = await _userRepository.GetByPhoneAsync(phone);
-        if (user == null || !user.IsVerified || !user.IsEmailVerified || !string.IsNullOrEmpty(user.RegistrationNumber))
+        //if (user == null || !user.IsVerified || !user.IsEmailVerified || !string.IsNullOrEmpty(user.RegistrationNumber))
+        //{
+        //    _logger.LogWarning("Registration failed for {Phone}: not verified, email not verified, or already registered", phone);
+        //    return (false, null, null);
+        //}
+
+        if (user != null)
         {
-            _logger.LogWarning("Registration failed for {Phone}: not verified, email not verified, or already registered", phone);
-            return (false, null, null);
+            _logger.LogWarning("Registration failed for {Phone}: Number already exists", phone);
+            return (false, "Registration failed. Number already exists", null,null);
         }
 
         var existingUserWithEmail = await _userRepository.GetByEmailAsync(email);
         if (existingUserWithEmail != null && existingUserWithEmail.Phone != phone)
         {
             _logger.LogWarning("Email {Email} is already registered to another user", email);
-            return (false, null, null);
+            return (false, "Email  is already registered to another user", null,null);
         }
 
         var existingUserWithUsername = await _userRepository.GetByUsernameAsync(username);
         if (existingUserWithUsername != null)
         {
             _logger.LogWarning("Username {Username} is already registered", username);
-            return (false, null, null);
+            return (false, "Username  already registered", null,null);
         }
 
         var brandUser = new BrandUser
@@ -631,7 +652,7 @@ public class AuthService : IAuthService
         catch (DbUpdateException ex)
         {
             _logger.LogError(ex, "Registration failed for phone {Phone} or email {Email} due to duplicate key", phone, email);
-            return (false, null, null);
+            return (false, "Registration failed for phone  or email due to duplicate key", null,null);
         }
 
         string prefix = "BRND";
@@ -641,7 +662,7 @@ public class AuthService : IAuthService
 
         var token = GenerateJwtToken(brandUser);
         _logger.LogInformation("Supplier/Brand {Phone} completed registration. BusinessType: {BusinessType}, RegistrationNumber: {RegNum}", phone, businessType, brandUser.RegistrationNumber);
-        return (true, brandUser.RegistrationNumber, token);
+        return (true, brandUser.RegistrationNumber, token,brandUser.OrganizationName);
     }
 
     public async Task<bool> UpdateBrandProfileAsync(int userId, string name, string email, string businessType = null, string panNumber = null, string gstNumber = null)

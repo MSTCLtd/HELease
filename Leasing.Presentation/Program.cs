@@ -1,3 +1,4 @@
+
 using Leasing.Application.Interfaces;
 using Leasing.Application.Services;
 using Leasing.Domain.Interfaces;
@@ -11,6 +12,13 @@ using Serilog;
 using Serilog.Sinks.MSSqlServer;
 using System.Text;
 using System.Text.Json.Serialization;
+using Leasing.Domain.Entities;
+using System.Text.Json;
+using Newtonsoft.Json;
+using Elasticsearch.Net;
+using Elastic.Clients.Elasticsearch;
+using Elastic.Transport;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -117,6 +125,36 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddTransient<ISmsService, SmsService>();
 
 builder.Services.AddMemoryCache();
+//builder.Services.AddSingleton<ElasticsearchClient>(sp =>
+//{
+//    var configuration = sp.GetRequiredService<IConfiguration>();
+//    var uri = new Uri(configuration.GetSection("Elasticsearch:Url").Value ?? "http://localhost:9200");
+//    var username = configuration.GetSection("Elasticsearch:Username").Value;
+//    var password = configuration.GetSection("Elasticsearch:Password").Value;
+
+//    // Create custom serializer
+//    var customSerializer = new CustomNewtonsoftSerializer();
+
+//    // Configure ElasticsearchClientSettings with custom serializer
+//    var settings = new ElasticsearchClientSettings(uri, customSerializer)
+//        .Authentication(new BasicAuthentication(username, password))
+//        .DefaultIndex("products")
+//        .DefaultMappingFor<Product>(m => m.IndexName("products").IdProperty(p => p.Id))
+//        .EnableDebugMode()
+//        .RequestTimeout(TimeSpan.FromSeconds(30))
+//        .OnRequestCompleted(r =>
+//        {
+//            if (r.RequestBodyInBytes != null)
+//                Console.WriteLine($"Request: {Encoding.UTF8.GetString(r.RequestBodyInBytes)}");
+//            if (r.ResponseBodyInBytes != null)
+//                Console.WriteLine($"Response: {Encoding.UTF8.GetString(r.ResponseBodyInBytes)}");
+//        })
+//        .DisableDirectStreaming()
+//        .ServerCertificateValidationCallback(Elastic.Transport.CertificateValidations.AllowAll); // For dev/testing
+
+//    return new ElasticsearchClient(settings);
+//});
+
 var app = builder.Build();
 
 //if (app.Environment.IsDevelopment())

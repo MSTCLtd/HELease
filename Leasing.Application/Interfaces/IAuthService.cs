@@ -26,7 +26,7 @@ namespace Leasing.Application.Interfaces
         Task<(bool Success, string Message, string Otp)> SendOtpToBothAsync(int userId);
         Task<(bool Success, string Message, string Token)> VerifyOtpForLoginAsync(int userId, string otp);
         Task<(bool Success, string Message, User User)> RegisterMstcAdminAsync(string username, string password, string email, string phone, string name, string roBo, List<string> permissions); // New method
-        Task<(bool Success, string RegistrationNumber, string Token)> RegisterSupplierOrBrandAsync(
+        Task<(bool Success, string RegistrationNumber, string Token, string OrganizationName)> RegisterSupplierOrBrandAsync(
             string phone,
             string name,
             string email,

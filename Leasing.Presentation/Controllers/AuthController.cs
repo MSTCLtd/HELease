@@ -81,14 +81,22 @@ namespace Leasing.Presentation.Controllers
                 //return BadRequest(new { Message = message });
             }
 
-            // Send OTP to both email and mobile
-            var (otpSuccess, otpMessage, otp) = await _authService.SendOtpToBothAsync(user.Id);
-            if (!otpSuccess)
+            if (user.Role == "Brand")
             {
-                return StatusCode(500, new { Message = otpMessage });
+                // Brand login: Return final token immediately
+                return Ok(new { Message = message, Token = tempToken, UserId = user.Id, Role = user.Role });
             }
-
-            return Ok(new { Message = message, TempToken = tempToken, UserId = user.Id, OtpSent = true });
+            else // MSTC
+            {
+                // MSTC login: Send OTP and return temporary token
+                var (otpSuccess, otpMessage, otp) = await _authService.SendOtpToBothAsync(user.Id);
+                if (!otpSuccess)
+                {
+                    return StatusCode(500, new { Message = otpMessage });
+                }
+                return Ok(new { Message = message, TempToken = tempToken, UserId = user.Id, OtpSent = true, Role = user.Role });
+            }
+            
         }
 
         [HttpPost("verify-login-otp")]
@@ -150,7 +158,7 @@ namespace Leasing.Presentation.Controllers
         [HttpPost("register/brand")]
         public async Task<IActionResult> RegisterSupplierOrBrand([FromBody] RegisterSupplierOrBrandRequest request)
         {
-            var (success, registrationNumber, token) = await _authService.RegisterSupplierOrBrandAsync(
+            var (success, registrationNumber, token, organizationName) = await _authService.RegisterSupplierOrBrandAsync(
                 request.Phone,
                 request.Name,
                 request.Email,
@@ -169,8 +177,8 @@ namespace Leasing.Presentation.Controllers
                 request.HasGstRegistration,
                 request.GstNumber
             );
-            if (!success) return BadRequest(new { message = "Supplier/Brand registration failed" });
-            return Ok(new { registrationNumber, token });
+            if (!success) return BadRequest(new { message = registrationNumber });
+            return Ok(new { registrationNumber, token,organizationName });
         }
 
         [HttpPut("update-brand-profile/{userId}")]
